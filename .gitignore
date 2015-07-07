@@ -1,0 +1,45 @@
+# ignore any .o and .a files
+*.[oa]
+# ignore any file ending with tilde
+*~
+# ignore all files under targets dir
+targets/
+
+# test results
+*.out
+*.vtu
+*.pvd
+*.out.*
+t3d.bmf*
+perf.data*
+*.orig
+
+# documentation aux-files.
+*.aux
+*.log
+*.toc
+*.lof
+*.synctex.gz
+*.run.xml
+*.bcf
+*-blx.bib
+*.blg
+
+
+__pycache__
+*.pyc
+*.swp
+.*.kate-swp
+*.backup
+*kdev*
+makefile
+elixirtest.c
+configure
+config.log
+config.status
+src/sm/materialname.C
+src/sm/materialname.h
+tests/sm/crack0Step0.vtk
+tests/sm/crack1Step0.vtk
+tests/sm/crack2Step0.vtk
+tests/sm/t3d.bmf

@@ -1,0 +1,3 @@
+\newcommand{\oofem}{\htmladdnormallink{OOFEM}{http://ksm.fsv.cvut.cz/%7Ebp/bp.html}\ }
+\newcommand{\oofemlnk}[1]{\htmladdnormallink{#1}{http://ksm.fsv.cvut.cz/%7Ebp/bp.html}\ }
+\newcommand{\bp}{\htmladdnormallink{Bo\v{r}ek Patz\'{a}k}{http://ksm.fsv.cvut.cz/%7Ebp/bp.html}}
