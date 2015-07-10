@@ -4,17 +4,17 @@
 
 
 # Configuration directories and files
-SourceDirectory: /home/srinath/oofem_new
-BuildDirectory: /home/srinath/oofem_new/build
+SourceDirectory: /scratch/oofem_dd.git
+BuildDirectory: /scratch/oofem_dd.git/build
 
 # Where to place the cost data store
 CostDataFile: 
 
 # Site is something like machine.domain, i.e. pragmatic.crd
-Site: helles
+Site: nazgul.bw01.neu.edu
 
 # Build name is osname-revision-compiler, i.e. Linux-2.4.2-2smp-c++
-BuildName: OOFEM(fm;tm;sm;dd;dss;openmp;LAPACK;parmetis;metis;PETSc;MPI;IML++)-x86_64-Linux-helles
+BuildName: OOFEM(fm;tm;sm;dd;dss;LAPACK;parmetis;metis;PETSc;MPI;IML++)-x86_64-Linux-nazgul.bw01.neu.edu
 
 # Submission information
 IsCDash: 
@@ -33,17 +33,20 @@ ScpCommand: /usr/bin/scp
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/usr/bin/cmake" "/home/srinath/oofem_new"
-MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}" -- -i
+ConfigureCommand: "/opt/neu/cmake/bin/cmake" "/scratch/oofem_dd.git"
+MakeCommand: /opt/neu/cmake/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}" -- -i
 DefaultCTestConfigurationType: Release
+
+# version control
+UpdateVersionOnly: 
 
 # CVS options
 # Default is "-d -P -A"
-CVSCommand: CVSCOMMAND-NOTFOUND
+CVSCommand: /usr/bin/cvs
 CVSUpdateOptions: -d -A -P
 
 # Subversion options
-SVNCommand: SVNCOMMAND-NOTFOUND
+SVNCommand: /usr/bin/svn
 SVNOptions: 
 SVNUpdateOptions: 
 
@@ -65,23 +68,25 @@ UpdateOptions:
 UpdateType: git
 
 # Compiler info
-Compiler: /usr/bin/g++
+Compiler: /opt/gcc/4.9.1/bin/g++
 
 # Dynamic analysis (MemCheck)
 PurifyCommand: 
 ValgrindCommand: 
 ValgrindCommandOptions: 
+MemoryCheckType: 
+MemoryCheckSanitizerOptions: 
 MemoryCheckCommand: /usr/bin/valgrind
 MemoryCheckCommandOptions: 
-MemoryCheckSuppressionFile: /home/srinath/oofem_new/tests/valgrind.supp
+MemoryCheckSuppressionFile: /scratch/oofem_dd.git/tests/valgrind.supp
 
 # Coverage
 CoverageCommand: /usr/bin/gcov
 CoverageExtraFlags: -l
 
 # Cluster commands
-SlurmBatchCommand: /usr/bin/sbatch
-SlurmRunCommand: /usr/bin/srun
+SlurmBatchCommand: SLURM_SBATCH_COMMAND-NOTFOUND
+SlurmRunCommand: SLURM_SRUN_COMMAND-NOTFOUND
 
 # Testing options
 # TimeOut is the amount of time in seconds to wait for processes

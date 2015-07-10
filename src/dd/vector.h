@@ -2,6 +2,7 @@
 #define VECTOR_H
 
 #include <initializer_list>
+#include "../oofemlib/floatarray.h"
 
 namespace dd {
 
@@ -136,6 +137,19 @@ namespace dd {
 
         virtual string typeName() const { return VECTOR_NAME; }
         static string staticTypeName() { return VECTOR_NAME; }
+        
+        oofem::FloatArray toArray() const {
+            oofem::FloatArray result;
+            result.resize(size);
+            for(long long i = 1; i <= size; i++) {
+                result[i] = data[i - 1];
+            }
+            return result;
+        }
+        
+        operator oofem::FloatArray() const {
+            return toArray();
+        }
     };
 
     typedef Vector<2> Vector2d;

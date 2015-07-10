@@ -19,8 +19,8 @@ ____________________________________________________\n"
 ################################################################################\n\n"
 
 #define HOST_TYPE "x86_64-Linux"
-#define HOST_NAME "helles"
-#define MODULE_LIST "fm;tm;sm;dd;dss;openmp;LAPACK;parmetis;metis;PETSc;MPI;IML++"
+#define HOST_NAME "nazgul.bw01.neu.edu"
+#define MODULE_LIST "fm;tm;sm;dd;dss;LAPACK;parmetis;metis;PETSc;MPI;IML++"
 
 /* Headers */
 

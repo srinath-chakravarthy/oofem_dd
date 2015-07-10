@@ -32,7 +32,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "../dd/DDlinearstatic.h"
+#include "DDlinearstatic.h"
 #include "../sm/Elements/structuralelement.h"
 #include "../sm/Elements/structuralelementevaluator.h"
 #include "nummet.h"
@@ -257,14 +257,7 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
 	 *     See example below
 	 */
 	// Convert dislocation position to global coordinates 
-	dd::Vector<2> DislGlobalPos = dis0.getLocation();
-	FloatArray FeDislGlobalPos; 
-	/// Appropriately allocate based on Domain dimensions, currently restricted to 2D = 2
-	FeDislGlobalPos.resize(DislGlobalPos.getSize());
-	FeDislGlobalPos.zero();
-	for (int ii=0; ii<=DislGlobalPos.getSize(); ii++){
-	  FeDislGlobalPos.at(ii+1) = DislGlobalPos[ii];
-	}
+	FloatArray FeDislGlobalPos = dis0.getLocation();
 	/// Now find stress at this global location 
 	/// Step 1
 	/// Find Element conatining point 

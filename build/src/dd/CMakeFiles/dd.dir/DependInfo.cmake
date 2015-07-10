@@ -4,20 +4,20 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/srinath/oofem_new/src/dd/complex.cpp" "/home/srinath/oofem_new/build/src/dd/CMakeFiles/dd.dir/complex.cpp.o"
-  "/home/srinath/oofem_new/src/dd/domain.cpp" "/home/srinath/oofem_new/build/src/dd/CMakeFiles/dd.dir/domain.cpp.o"
-  "/home/srinath/oofem_new/src/dd/point.cpp" "/home/srinath/oofem_new/build/src/dd/CMakeFiles/dd.dir/point.cpp.o"
-  "/home/srinath/oofem_new/src/dd/point/dislocation.cpp" "/home/srinath/oofem_new/build/src/dd/CMakeFiles/dd.dir/point/dislocation.cpp.o"
-  "/home/srinath/oofem_new/src/dd/point/obstacle.cpp" "/home/srinath/oofem_new/build/src/dd/CMakeFiles/dd.dir/point/obstacle.cpp.o"
-  "/home/srinath/oofem_new/src/dd/point/source.cpp" "/home/srinath/oofem_new/build/src/dd/CMakeFiles/dd.dir/point/source.cpp.o"
-  "/home/srinath/oofem_new/src/dd/point/virtualdislocation.cpp" "/home/srinath/oofem_new/build/src/dd/CMakeFiles/dd.dir/point/virtualdislocation.cpp.o"
-  "/home/srinath/oofem_new/src/dd/slipplane.cpp" "/home/srinath/oofem_new/build/src/dd/CMakeFiles/dd.dir/slipplane.cpp.o"
-  "/home/srinath/oofem_new/src/dd/slipsystem.cpp" "/home/srinath/oofem_new/build/src/dd/CMakeFiles/dd.dir/slipsystem.cpp.o"
+  "/scratch/oofem_dd.git/src/dd/complex.cpp" "/scratch/oofem_dd.git/build/src/dd/CMakeFiles/dd.dir/complex.cpp.o"
+  "/scratch/oofem_dd.git/src/dd/domain.cpp" "/scratch/oofem_dd.git/build/src/dd/CMakeFiles/dd.dir/domain.cpp.o"
+  "/scratch/oofem_dd.git/src/dd/point.cpp" "/scratch/oofem_dd.git/build/src/dd/CMakeFiles/dd.dir/point.cpp.o"
+  "/scratch/oofem_dd.git/src/dd/point/dislocation.cpp" "/scratch/oofem_dd.git/build/src/dd/CMakeFiles/dd.dir/point/dislocation.cpp.o"
+  "/scratch/oofem_dd.git/src/dd/point/obstacle.cpp" "/scratch/oofem_dd.git/build/src/dd/CMakeFiles/dd.dir/point/obstacle.cpp.o"
+  "/scratch/oofem_dd.git/src/dd/point/source.cpp" "/scratch/oofem_dd.git/build/src/dd/CMakeFiles/dd.dir/point/source.cpp.o"
+  "/scratch/oofem_dd.git/src/dd/point/virtualdislocation.cpp" "/scratch/oofem_dd.git/build/src/dd/CMakeFiles/dd.dir/point/virtualdislocation.cpp.o"
+  "/scratch/oofem_dd.git/src/dd/slipplane.cpp" "/scratch/oofem_dd.git/build/src/dd/CMakeFiles/dd.dir/slipplane.cpp.o"
+  "/scratch/oofem_dd.git/src/dd/slipsystem.cpp" "/scratch/oofem_dd.git/build/src/dd/CMakeFiles/dd.dir/slipsystem.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # Preprocessor definitions for this target.
-set(CMAKE_TARGET_DEFINITIONS
+set(CMAKE_TARGET_DEFINITIONS_CXX
   "MPICH_IGNORE_CXX_SEEK"
   "__DD_MODULE"
   "__FM_MODULE"
@@ -30,12 +30,8 @@ set(CMAKE_TARGET_DEFINITIONS
   "liboofem_EXPORTS"
   )
 
-# Targets to which this target links.
-set(CMAKE_TARGET_LINKED_INFO_FILES
-  )
-
 # The include file search paths:
-set(CMAKE_C_TARGET_INCLUDE_PATH
+set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../src/oofemlib"
   "."
   "../src/fm"
@@ -43,11 +39,12 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
   "../src/sm"
   "../src/dd"
   "../src/dss"
-  "/opt/petsc/linux_gcc_openmpi/include"
-  "/usr/lib/openmpi/include"
-  "/usr/lib/openmpi/include/openmpi"
-  ".."
+  "/opt/neu/petsc/linux_ib_gnu49_openmpi/include"
+  "/opt/open-mpi/ib-gnu49/include"
+  "/opt/gcc/4.9.1/include"
+  "../"
   )
-set(CMAKE_CXX_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})
-set(CMAKE_Fortran_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})
-set(CMAKE_ASM_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})
+
+# Targets to which this target links.
+set(CMAKE_TARGET_LINKED_INFO_FILES
+  )
