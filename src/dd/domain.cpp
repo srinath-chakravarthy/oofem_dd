@@ -33,12 +33,10 @@ namespace dd {
             oofem::StructuralElement * se = static_cast<oofem::StructuralElement *>(e);
             se->computeStrainVector(strainElem, &gp, engModel->giveCurrentStep());
             se->computeStressVector(stressElem, strainElem, &gp, engModel->giveCurrentStep());
-            
-            double cos2i = 1;
-            double sin2i = 1;
-            
+                        
             force += point->getBurgersMagnitude() * point->getBurgersSign() *
-                     (((stressElem[1] - stressElem[2]) * cos2i) + stressElem[3] * sin2i / 2);
+                     (((stressElem[1] - stressElem[2]) * point->getSlipPlane()->getCos()) + 
+                       stressElem[3] * point->getSlipPlane()->getSin() / 2);
                 
         }
     }
