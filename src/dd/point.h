@@ -126,7 +126,7 @@ namespace dd {
         /// Returns SlipPlane containing the point
         SlipPlane * getSlipPlane() const { return sPlaneRegistration->getTarget(); }
         /// Returns Position on the SlipPlane containing the point
-        Vector2d getLocation() const { return getSlipPlane()->getPointPosition(slipPlanePosition); }
+        Vector<2> getLocation() const { return getSlipPlane()->getPointPosition(slipPlanePosition); }
 
 
         /**

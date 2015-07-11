@@ -11,6 +11,10 @@
  * Conatins @param Point Information ---> Container to all points --> registered through a hash tabl
  */ 
 
+namespace oofem { 
+    class DDLinearStatic;
+}
+    
 namespace dd {
 
     class SlipSystem;
@@ -25,15 +29,24 @@ namespace dd {
     private:
         double propModulus;                   /*!< Young's modulus ratio in this Domain */
         double propPassionsRatio;             /*!< Poisson's ratio in this Domain */ 
-        std::vector<SlipSystem *> sSystems;   /*!< Container to Slipsystems for this domain */       
+        std::vector<SlipSystem *> sSystems;   /*!< Container to Slipsystems for this domain */    
+        oofem::DDLinearStatic * engModel;   
     public:
-	/// Constructor to create domain Material Properties->modulus, poisson
-	Domain(const double & propModulus, const double & propPassionsRatio);
-      	/// Constructor to create domain with SlipSystemCount, Material Properties->modulus, poisson
-        Domain(long long slipSystemCount, const double & propModulus, const double & propPassionsRatio);
-        Domain();
+	    /// Constructor to create domain Material Properties->modulus, poisson
+	    Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio);
+      	/// Constructor to create domain with SlipSystemCount, Material Properties->modulus, 
 
-
+      
+        /**
+	     * Add the FEM force contribution at the given position.
+	     * @param position The position to extract the force from
+	     * @param force vector containing glide and climb forces 
+	     * @param forceGradient vector contain gradient along slip direction and perpendicular to slip direction
+	     * @param stress vector containing the 2D vector components of the stress (stress_xx, stress_yy, stress_xy)
+	     */ 
+        virtual void addFEMContribution(const Point * point, Vector<2> &force,
+                                        Vector<2> &forceGradient, Vector<3> &stress) const;
+      
         void addSlipSystem(SlipSystem * ss);
 
 
