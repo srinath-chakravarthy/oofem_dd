@@ -219,15 +219,15 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
     int NumberOfDomains = this->giveNumberOfDomains();
     // Loop through all the giveNumberOfDomains
     for (int i = 1; i<= NumberOfDomains; i++) {
-        Domain *domain = this->giveDomain(i);
+        //Domain *domain = this->giveDomain(i);
         /// Create a spatial localizer which in effect has services for locating points in element etc.
-        SpatialLocalizer *sl = domain->giveSpatialLocalizer();
+        //SpatialLocalizer *sl = domain->giveSpatialLocalizer();
         // Perform DD solution at this time step, solution will depend on quantities in the input file
         /// @todo these have to be defined and initialized earlier
         /// Each domain for the DD case can have only one material... throw error otherwise
         //// Also the DD_domains should be intialized with these materials properties during input
         //// Here i am just using values from input file for algorithmic convenience
-        dd::Domain dd_domain(70e9,0.3);
+        dd::Domain dd_domain(this, 70e9,0.3);
         dd::SlipSystem ss0 = dd::SlipSystem(M_PI/6.0, 0.25e-9);
         dd_domain.addSlipSystem(&ss0);
 
@@ -245,10 +245,9 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         dd::Vector<2> force, v2;
         dd::Vector<3> stress;
 	
-	oofem::FloatArray force_dd;
+	    oofem::FloatArray force_dd;
 
         dis0.addForceContribution<dd::DislocationPoint>(force, v2, stress);
-	
 	
 	/** Procedure to calculate force on each dislocation 
 	 * Loop through all DislocationPoints, and SourcePoints
@@ -257,11 +256,11 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
 	 *     See example below
 	 */
 	// Convert dislocation position to global coordinates 
-	FloatArray FeDislGlobalPos = dis0.getLocation();
+	//FloatArray FeDislGlobalPos = dis0.getLocation();
 	/// Now find stress at this global location 
 	/// Step 1
 	/// Find Element conatining point 
-	Element *elem = sl->giveElementContainingPoint(FeDislGlobalPos);
+	//Element *elem = sl->giveElementContainingPoint(FeDislGlobalPos);
 	//// Now we need to write 3 routines in oofem to get the strain/stress at this point
 	// 1) Convert this global coordinate to element local coordinate
 	// 2) Evaluate Stress at this location, there are services in oofem to evaluate stress at a given gp
