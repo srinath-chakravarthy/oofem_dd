@@ -128,7 +128,7 @@ namespace dd {
          */
         Vector operator*(const double & factor) const {
             Vector result(*this);
-            result.scale(-1);
+            result.scale(factor);
             return result;
         }
         Vector & operator*=(const double & factor) {
@@ -141,8 +141,8 @@ namespace dd {
         oofem::FloatArray toArray() const {
             oofem::FloatArray result;
             result.resize(size);
-            for(long long i = 1; i <= size; i++) {
-                result[i] = data[i - 1];
+            for(long long i = 0; i < size; i++) {
+                result[i] = data[i];
             }
             return result;
         }
