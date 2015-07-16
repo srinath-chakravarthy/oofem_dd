@@ -93,6 +93,17 @@ namespace dd {
         addForceContribution(getDomain()->getContainer(key), force, v2, stress);
     }
     
+    /**
+     * Add the cached force results.
+     */
+    void Point::sumCaches(Vector<2> & force, Vector<2> & forceGradient, Vector<3> & stress) {
+        for(unsigned i = 0; i < caches.size(); i++) {
+            force += caches[i].getForce();
+            forceGradient += caches[i].getForceGradient();
+            stress += caches[i].getStress();
+        }
+    }
+    
     void Point::updateCaches() {
         for(unsigned i = 0; i < caches.size(); i++) {
             caches[i].update();

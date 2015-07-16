@@ -200,6 +200,11 @@ namespace dd {
         }
     
         /**
+         * Add the cached force results.
+         */
+        void sumCaches(Vector<2> & force, Vector<2> & forceGradient, Vector<3> & stress);
+    
+        /**
          * Update the force caches.
          */
         virtual void updateCaches();

@@ -14,6 +14,7 @@ namespace dd {
 #define DISLOCATIONPOINT_NAME "DislocationPoint"
     private:
         int burgersSign;
+        void setCaches();
     public:
 
         DislocationPoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, int burgersSign,
@@ -23,7 +24,7 @@ namespace dd {
                          list<Point *>::iterator antecedentIt, double slipPlanePosition, int burgersSign,
                          list<Point *>::iterator nextObstacle,
                          list<Point *>::reverse_iterator prevObstacle);
-
+                         
         virtual int getBurgersSign() const { return burgersSign; }
 
         virtual bool canMove() const { return true; }
