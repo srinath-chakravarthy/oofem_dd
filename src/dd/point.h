@@ -29,7 +29,7 @@ namespace dd {
     class Point : public DdObject {
 #define POINT_NAME "Point"
     protected:
-        PointLog projectedLocation;
+        PointLog * projectedLocation;
         std::vector<ForceCache> caches;
         Registration<Point, Domain> * domainRegistration = nullptr; /*!< Pointer to a registered Domain */
         Registration<Point, SlipPlane> * sPlaneRegistration = nullptr; /*!< pointer to a registerd SlipPlane */

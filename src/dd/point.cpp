@@ -111,10 +111,12 @@ namespace dd {
     }
     
     void Point::updateLocation() {
-        if(getSlipPlane() != projectedLocation.slipPlane) {
+        if(projectedLocation == nullptr) { return; } // Determine return or throw
+        if(getSlipPlane() != projectedLocation->slipPlane) {
             throw(3); // TODO
         }
-        slipPlanePosition = projectedLocation.slipPlanePosition;
+        slipPlanePosition = projectedLocation->slipPlanePosition;
+        delete projectedLocation;
     }
 }
 
