@@ -29,15 +29,15 @@ namespace dd {
         /**
           * Extensional equality
           */
-        virtual bool equals(const DdObject & other) const {
-            return this == (&other);
+        virtual bool equals(const DdObject * other) const {
+            return this == other;
         }
 
         /**
           * Intensional equality
           */
-        bool operator==(const DdObject & other) const {
-            return this->equals(other);
+        bool operator==(const DdObject * other) const {
+            return equals(other);
         }
 
         virtual string typeName() const { return DDOBJECT_NAME; }

@@ -8,6 +8,9 @@
     point/source.cpp
     point/obstacle.cpp
     point/virtualdislocation.cpp
+    timemanager.cpp
+    ddcounter.cpp
+    forcecache.cpp
     )
   
 add_library(dd

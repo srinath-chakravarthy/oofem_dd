@@ -3,7 +3,7 @@
 #include "vector.h"
 #include "domain.h"
 #include "complex.h"
-
+#include "forcefunctor/fromfem.h"
 namespace dd {
     void Point::move() {
         DdError::exception("Point cannot move.");
@@ -91,6 +91,19 @@ namespace dd {
 
     void Point::addForceContribution(const string & key, Vector<2> & force, Vector<2> & v2, Vector<3> & stress) {
         addForceContribution(getDomain()->getContainer(key), force, v2, stress);
+    }
+    
+    void Point::updateCaches() {
+        for(unsigned i = 0; i < caches.size(); i++) {
+            caches[i].update();
+        }
+    }
+    
+    void Point::updateLocation() {
+        if(getSlipPlane() != projectedLocation.slipPlane) {
+            throw(3); // TODO
+        }
+        slipPlanePosition = projectedLocation.slipPlanePosition;
     }
 }
 

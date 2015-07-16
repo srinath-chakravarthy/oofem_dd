@@ -5,7 +5,8 @@
 #include "slipplane.h"
 #include "registration.h"
 #include "vector.h"
-#include <string>
+#include "forcecache.h"
+#include <vector>
 /** Abstract Point Class defining a basic Point 
  * Point is is registered to a class Domain and a SlipPlane
  * All other Points --> Dislocations, Sources, Obstacles inherit the characteristics of this class
@@ -15,13 +16,22 @@
 
 namespace dd {
 
+    struct PointLog {
+        SlipPlane * slipPlane;
+        double slipPlanePosition;
+        PointLog(SlipPlane * slipPlane = nullptr, double slipPlanePosition = 0) :
+            slipPlane(slipPlane), slipPlanePosition(slipPlanePosition) { }
+    };
+
     /**
       * Abstract point class.
       */
     class Point : public DdObject {
 #define POINT_NAME "Point"
     protected:
-       Registration<Point, Domain> * domainRegistration = nullptr; /*!< Pointer to a registered Domain */
+        PointLog projectedLocation;
+        std::vector<ForceCache> caches;
+        Registration<Point, Domain> * domainRegistration = nullptr; /*!< Pointer to a registered Domain */
         Registration<Point, SlipPlane> * sPlaneRegistration = nullptr; /*!< pointer to a registerd SlipPlane */
         double slipPlanePosition = 0; /* !< Local Postion of point on SlipPlane */
 
@@ -188,6 +198,16 @@ namespace dd {
         void addForceContribution(Vector<2> & force, Vector<2> & force_gradient, Vector<3> & stress) {
             addForceContribution(getDomain()->getContainer<T>(), force, force_gradient, stress);
         }
+    
+        /**
+         * Update the force caches.
+         */
+        virtual void updateCaches();
+        
+        /**
+         * Update the location
+         */
+        virtual void updateLocation();
 
         virtual string typeName() const { return POINT_NAME; }
         static string staticTypeName() { return POINT_NAME; }
