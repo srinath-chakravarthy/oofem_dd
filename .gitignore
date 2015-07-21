@@ -2,8 +2,11 @@
 *.[oa]
 # ignore any file ending with tilde
 *~
+# ignore all file with kdev
+*kdev*
 # ignore all files under targets dir
 targets/
+build/
 
 # test results
 *.out
