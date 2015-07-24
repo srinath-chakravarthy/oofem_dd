@@ -22,6 +22,22 @@ namespace dd {
         propModulus(propModulus), propPassionsRatio(propPassionsRatio),
         engModel(engModel), timeManager(this, timeStep) { }
         
+        
+    void Domain::nextStep(oofem::TimeStep * timeStep) {
+        timeManager.updateToNextFemStep(timeStep);
+    }
+    void Domain::nextStep() {
+        timeManager.updateToNextDdStep();
+    }
+    void Domain::updateForceCaches()  {
+        for(auto keyValue : containers) {
+            for(Point * point : keyValue.second) {
+                point->updateCaches();
+            }
+        }
+    }
+
+        
     void Domain::addFEMContribution(const Point * point, Vector<2> &force,
                             Vector<2> &forceGradient, Vector<3> &stress) const {
         for(int i = 1; i <= engModel->giveNumberOfDomains(); i++) {

@@ -35,13 +35,14 @@ namespace dd {
         std::vector<SlipSystem *> sSystems;   /*!< Container to Slipsystems for this domain */    
         oofem::DDLinearStatic * engModel;
         TimeManager timeManager;
-        DdCounter * lastUpdate = nullptr;
     public:
 	    /// Constructor to create domain Material Properties->modulus, poisson
 	    Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio,
 	           oofem::TimeStep * timeStep = nullptr);
-      	/// Constructor to create domain with SlipSystemCount, Material Properties->modulus, 
-
+      
+        virtual void nextStep(oofem::TimeStep * timeStep);
+        virtual void nextStep();
+        virtual void updateForceCaches();
       
         /**
 	     * Add the FEM force contribution at the given position.
