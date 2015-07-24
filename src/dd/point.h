@@ -30,6 +30,7 @@ namespace dd {
 #define POINT_NAME "Point"
     protected:
         PointLog * projectedLocation;
+        std::list<PointLog *> history;
         std::vector<ForceCache> caches;
         Registration<Point, Domain> * domainRegistration = nullptr; /*!< Pointer to a registered Domain */
         Registration<Point, SlipPlane> * sPlaneRegistration = nullptr; /*!< pointer to a registerd SlipPlane */
@@ -139,7 +140,7 @@ namespace dd {
         Vector<2> getLocation() const { return getSlipPlane()->getPointPosition(slipPlanePosition); }
 
 
-        /**
+    /**
 	 * Abstract method to get sign of burgers Vector at a point
 	 * The inherited class will define the method
 	 */ 

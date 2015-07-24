@@ -4,6 +4,7 @@
 #include "domain.h"
 #include "complex.h"
 #include "forcefunctor/fromfem.h"
+#include "dderror.h"
 namespace dd {
     void Point::move() {
         DdError::exception("Point cannot move.");
@@ -111,12 +112,15 @@ namespace dd {
     }
     
     void Point::updateLocation() {
-        if(projectedLocation == nullptr) { return; } // Determine return or throw
+        if(projectedLocation == nullptr) { 
+            DdError::exception("Projected location not set.");
+        }
         if(getSlipPlane() != projectedLocation->slipPlane) {
-            throw(3); // TODO
+            DdError::exception("Unimplemented.");
         }
         slipPlanePosition = projectedLocation->slipPlanePosition;
-        delete projectedLocation;
+        history.push_front(projectedLocation);
+        projectedLocation = nullptr;
     }
 }
 
