@@ -3,6 +3,7 @@
 #include "hashedregistrable.h"
 #include "ddobject.h"
 #include "vector.h"
+#include "timemanager.h"
 #include <string>
 /** Definition of Domain for discrete dislocation dynamics in 2D
  * Also defines the basic namespace dd 
@@ -13,6 +14,7 @@
 
 namespace oofem { 
     class DDLinearStatic;
+    class TimeStep;
 }
     
 namespace dd {
@@ -20,6 +22,7 @@ namespace dd {
     class SlipSystem;
     class Point;
     class DislocationPoint;
+    class DdCounter;
 
     /**
      * Problem domain.
@@ -30,10 +33,13 @@ namespace dd {
         double propModulus;                   /*!< Young's modulus ratio in this Domain */
         double propPassionsRatio;             /*!< Poisson's ratio in this Domain */ 
         std::vector<SlipSystem *> sSystems;   /*!< Container to Slipsystems for this domain */    
-        oofem::DDLinearStatic * engModel;   
+        oofem::DDLinearStatic * engModel;
+        TimeManager timeManager;
+        DdCounter * lastUpdate = nullptr;
     public:
 	    /// Constructor to create domain Material Properties->modulus, poisson
-	    Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio);
+	    Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio,
+	           oofem::TimeStep * timeStep = nullptr);
       	/// Constructor to create domain with SlipSystemCount, Material Properties->modulus, 
 
       

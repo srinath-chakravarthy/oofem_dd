@@ -17,9 +17,10 @@
 
 namespace dd {
 
-    Domain::Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio) :
+    Domain::Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio,
+                   oofem::TimeStep * timeStep) :
         propModulus(propModulus), propPassionsRatio(propPassionsRatio),
-        engModel(engModel) { }
+        engModel(engModel), timeManager(this, timeStep) { }
         
     void Domain::addFEMContribution(const Point * point, Vector<2> &force,
                             Vector<2> &forceGradient, Vector<3> &stress) const {
