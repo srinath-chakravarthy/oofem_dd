@@ -4,11 +4,6 @@
 #include "ddobject.h"
 #include <list>
 
-namespace oofem {
-	class TimeStep;
-}
-
-
 namespace dd {
 
     class Domain;
@@ -17,16 +12,15 @@ namespace dd {
     class TimeManager : public DdObject {
 #define TIMEMANAGER_NAME "TimeManager";
         Domain * domain;
-       	oofem::TimeStep * timeStep;
        	std::list<DdCounter *> counterHistory;
     public:
-		TimeManager(Domain * domain, oofem::TimeStep * timeStep);
+		TimeManager(Domain * domain, long long femStep = 0);
 		virtual ~TimeManager();
 		
 		DdCounter * getCurrentCounter();
 		bool isCurrent(DdCounter * counter);	
 		void updateToNextDdStep();
-		void updateToNextFemStep(oofem::TimeStep * timeStep);
+		void updateToNextFemStep();
 
       
         virtual string typeName() const { return TIMEMANAGER_NAME; }

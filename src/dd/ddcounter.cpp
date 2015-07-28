@@ -1,24 +1,26 @@
 #include "ddcounter.h"
-#include "../oofemlib/timestep.h"
 
 namespace dd {
-	DdCounter::DdCounter(long long count, oofem::TimeStep * timeStep) :
-		count(count), timeStep(timeStep) { }
-	DdCounter::DdCounter(oofem::TimeStep * timeStep) :
-		DdCounter(0, timeStep) { }
+	DdCounter::DdCounter(long long ddStep, long long femStep) :
+		ddStep(ddStep), femStep(femStep) { }
+	DdCounter::DdCounter(long long femStep) :
+		DdCounter(0, femStep) { }
    
    	bool DdCounter::equals(const DdObject * other) const {
    		const DdCounter * asCounter = dynamic_cast<const DdCounter *>(other);
    		if(asCounter == nullptr) { return false; }
-   		return count == asCounter->getCount() && timeStep == asCounter->getTimeStep();
+   		return ddStep == asCounter->getDdStep() && femStep == asCounter->getFemStep();
 	}
 
-    long long DdCounter::getCount() const { return count; }
-    oofem::TimeStep * DdCounter::getTimeStep() const { return timeStep; }
+    long long DdCounter::getDdStep() const { return ddStep; }
+    long long DdCounter::getFemStep() const { return femStep; }
 	
 	DdCounter * DdCounter::constructNextDdStep() const {
-		return new DdCounter(count + 1, timeStep);
+		return new DdCounter(ddStep + 1, femStep);
 	}
+    DdCounter * DdCounter::constructNextFemStep() const {
+        return new DdCounter(0, femStep + 1);    
+    }
     
 
 }

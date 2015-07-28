@@ -14,16 +14,17 @@ namespace dd {
     class DdCounter : public DdObject {
 #define DDCOUNTER_NAME "DdCounter"
 	private:
-		long long count;
-		oofem::TimeStep * timeStep;
+		long long ddStep;
+		long long femStep;
     public:
-    	DdCounter(long long count, oofem::TimeStep * timeStep);
-    	DdCounter(oofem::TimeStep * timeStep);
+    	DdCounter(long long ddStep, long long femStep);
+    	DdCounter(long long femStep);
     	
-    	long long getCount() const;
-    	oofem::TimeStep * getTimeStep() const;
+    	long long getDdStep() const;
+    	long long getFemStep() const;
     	virtual bool equals(const DdObject * other) const;
     	DdCounter * constructNextDdStep() const;
+    	DdCounter * constructNextFemStep() const;
     
       
         virtual string typeName() const { return DDCOUNTER_NAME; }

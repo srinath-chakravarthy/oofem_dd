@@ -1,23 +1,16 @@
-#include "../oofemlib/timestep.h"
-
 #include "domain.h"
 #include "ddcounter.h"
 #include "timemanager.h"
 #include "dderror.h"
 
 namespace dd {
-	TimeManager::TimeManager(Domain * domain, oofem::TimeStep * timeStep = nullptr) :
-		domain(domain), timeStep(timeStep) { 
-	    if(timeStep != nullptr) {
-            updateToNextFemStep(timeStep);	    
-	    }
+	TimeManager::TimeManager(Domain * domain, long long femStep) :
+		domain(domain) { 
+	    counterHistory.push_front(new DdCounter(femStep));
 	}
 	TimeManager::~TimeManager() { }
 
-	DdCounter * TimeManager::getCurrentCounter() { 
-        if(counterHistory.empty()) {
-            DdError::exception("TimeManager not initiated.");
-        }	   
+	DdCounter * TimeManager::getCurrentCounter() {
         return counterHistory.front(); 
 	}
 	bool TimeManager::isCurrent(DdCounter * counter) { return counter->equals(getCurrentCounter()); }
@@ -26,8 +19,8 @@ namespace dd {
 		counterHistory.push_front(getCurrentCounter()->constructNextDdStep());
 	}
 	
-	void TimeManager::updateToNextFemStep(oofem::TimeStep * timeStep) {
-		counterHistory.push_front(new DdCounter(timeStep));
+	void TimeManager::updateToNextFemStep() {
+		counterHistory.push_front(getCurrentCounter()->constructNextDdStep());
 	}
 
 

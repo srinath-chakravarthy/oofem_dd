@@ -34,14 +34,10 @@ namespace dd {
         double propPassionsRatio;             /*!< Poisson's ratio in this Domain */ 
         std::vector<SlipSystem *> sSystems;   /*!< Container to Slipsystems for this domain */    
         oofem::DDLinearStatic * engModel;
-        TimeManager timeManager;
     public:
 	    /// Constructor to create domain Material Properties->modulus, poisson
-	    Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio,
-	           oofem::TimeStep * timeStep = nullptr);
+	    Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio);
       
-        virtual void nextStep(oofem::TimeStep * timeStep);
-        virtual void nextStep();
         virtual void updateForceCaches();
       
         /**

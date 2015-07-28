@@ -17,18 +17,10 @@
 
 namespace dd {
 
-    Domain::Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio,
-                   oofem::TimeStep * timeStep) :
+    Domain::Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio) :
         propModulus(propModulus), propPassionsRatio(propPassionsRatio),
-        engModel(engModel), timeManager(this, timeStep) { }
+        engModel(engModel) { }
         
-        
-    void Domain::nextStep(oofem::TimeStep * timeStep) {
-        timeManager.updateToNextFemStep(timeStep);
-    }
-    void Domain::nextStep() {
-        timeManager.updateToNextDdStep();
-    }
     void Domain::updateForceCaches()  {
         for(auto keyValue : containers) {
             for(Point * point : keyValue.second) {
