@@ -38,6 +38,8 @@
 #include "gausspoint.h"
 #include "floatmatrix.h"
 #include "floatarray.h"
+#include "stressvector.h"
+#include "strainvector.h"
 #include "intarray.h"
 #include "mathfem.h"
 #include "contextioerr.h"
@@ -65,6 +67,15 @@ ViscoPlastic :: ~ViscoPlastic()
     delete linearElasticMaterial;
 }
 
+// specifies whether a given material mode is supported by this model
+int
+ViscoPlastic :: hasMaterialModeCapability(MaterialMode mode)
+{
+    return mode == _3dMat || mode == _1dMat || mode == _PlaneStrain;
+}
+
+
+
 // reads the model parameters from the input file
 IRResultType
 ViscoPlastic :: initializeFrom(InputRecord *ir)
@@ -80,7 +91,7 @@ ViscoPlastic :: initializeFrom(InputRecord *ir)
     G = static_cast< IsotropicLinearElasticMaterial * >(linearElasticMaterial)->giveShearModulus();
     K = static_cast< IsotropicLinearElasticMaterial * >(linearElasticMaterial)->giveBulkModulus();
 
-    IR_GIVE_FIELD(ir, sig0, _IFT_ViscoPlastic_sig0); // uniaxial yield stress
+    //IR_GIVE_FIELD(ir, sig0, _IFT_ViscoPlastic_sig0); // uniaxial yield stress
 
     IR_GIVE_FIELD(ir, sig0, _IFT_ViscoPlastic_sig0); // uniaxial yield stress
 
@@ -92,9 +103,10 @@ ViscoPlastic :: initializeFrom(InputRecord *ir)
 
     Cp = 1.0;
     IR_GIVE_OPTIONAL_FIELD(ir, Cp, _IFT_ViscoPlastic_cp); // Scaling factor in ViscoPlastic law
-
+    /*
     lobs = 0.0;
     IR_GIVE_OPTIONAL_FIELD(ir, lobs, _IFT_ViscoPlastic_lobs); // Scaling factor in ViscoPlastic law
+    */
     return IRRT_OK;
 }
 
@@ -107,7 +119,7 @@ ViscoPlastic :: CreateStatus(GaussPoint *gp) const
 
 
 void
-ViscoPlastic :: giveRealStressVector_3d(FloatArray &answer,
+ViscoPlastic :: giveRealStressVector(FloatArray &answer,
                                         GaussPoint *gp,
                                         const FloatArray &totalStrain,
                                         TimeStep *tStep)
@@ -116,6 +128,7 @@ ViscoPlastic :: giveRealStressVector_3d(FloatArray &answer,
     
     /// This is necessary to maintain consistency with non-local model where xita exits
     /// Consequently xita needs to be defined as zero in the local model. 
+    this->initTempStatus(gp);
     status->setTempXita(0.0);
     this->performPlasticityReturn(gp, totalStrain);
     answer = status->giveTempEffectiveStress();
@@ -158,6 +171,9 @@ ViscoPlastic :: computeXita(double &xita, GaussPoint *gp, TimeStep *tStep)
     }
     //double *stresseq = new double[seq->size()];
     int ss = seq.size();
+    if (seq.size() != dN.giveNumberOfRows()){
+      OOFEM_ERROR("This model cannot be used in Reduced integration elements")
+    }
     FloatArray stresseq(ss);
     std::copy(seq.begin(), seq.end(), stresseq.begin());
     //seq->clear();
@@ -178,31 +194,35 @@ void
 ViscoPlastic :: performPlasticityReturn(GaussPoint *gp, const FloatArray &totalStrain)
 {
     ViscoPlasticStatus *status = static_cast< ViscoPlasticStatus * >( this->giveStatus(gp) );
-    // Local Variables for performing local Newton iterations to integrate Plasticity-Stress strain law
-    // For ViscoPlastic Materials
+    MaterialMode mode = gp->giveMaterialMode();
+    
+    /// Local Variables for performing local Newton iterations to integrate Plasticity-Stress strain law
+    /// For ViscoPlastic Materials
     const double NRtol = 1.e-6; // Tolerance of Newton-Raphson locally
     
     const double zero = 1.e-30; // Tolerance zero values
 
-    double kappa; // Total Effective Plastic strain
-    double kappa_init; // Stores incoming Total Effective Plastic strain
-    double yieldValue; // Temporary Variable
-    double dKappa; // Incremental Effective Plastic Strain
-    double E; // Youngs Modulus
+    double kappa; ///< Total Effective Plastic strain
+    double kappa_init; ///< Stores incoming Total Effective Plastic strain
+    double yieldValue; ///<d Temporary Variable
+    double dKappa; ///< Incremental Effective Plastic Strain
+    double E; ///< Youngs Modulus
 
-    double DEE; // Incremental Effective Total Strain
+    double DEE; ///< Incremental Effective Total Strain
 
-    // Temporary variables during integration
+    /// Temporary variables during integration
     double RHS, Bot, pama, Ratio;
     double sigmaY, h, dtrialS;
     
 
-    double trialS; // Effective Stress (J2)
+    double trialS; ///< Effective Stress (J2)
 
     E = static_cast< IsotropicLinearElasticMaterial * >(linearElasticMaterial)->giveYoungsModulus();
 
+    /// Plastic Strain and plastic Strain increment
     FloatArray plStrain, dplStrain;
-    FloatArray fullStress, StressDev;
+    //FloatArray fullStress, StressDev;
+    
     double StressVol;
     // get the initial plastic strain and initial kappa from the status
     plStrain = status->givePlasticStrain();
@@ -210,52 +230,76 @@ ViscoPlastic :: performPlasticityReturn(GaussPoint *gp, const FloatArray &totalS
     kappa_init = kappa;
 
     // Strain the end of the previous step --> total Strain vector
-    const FloatArray strain = status->giveStrainVector();
-    FloatArray strain_dev;
+    //const FloatArray strain = status->giveStrainVector();
+    //const FloatArray strain1 = status->giveStrainVector();
+    StrainVector strain(status->giveStrainVector(), mode);
+    StrainVector strain_dev(mode);
     double strainVol;
 
-    strainVol = computeDeviatoricVolumetricSplit(strain_dev, strain);
-    // Stress at the end of the previous step
-    const FloatArray stress = status->giveStressVector();
-
-    // Strain increment Quantities
-    FloatArray strainIncrement = status->giveStrainVector();
+    strain.computeDeviatoricVolumetricSplit(strain_dev, strainVol);
+    
+    //strainVol = computeDeviatoricVolumetricSplit(strain_dev, strain);
+    
+    /// Strain increment Quantities
+    //FloatArray strainIncrement = status->giveStrainVector();
+    StrainVector strainIncrement(mode);
     strainIncrement.zero();
+   
     strainIncrement.beDifferenceOf(totalStrain, status->giveStrainVector());
     double strainIncrementVol;
-    FloatArray strainIncrementDev;
-    strainIncrementVol = computeDeviatoricVolumetricSplit(strainIncrementDev, strainIncrement);
-
+    StrainVector strainIncrementDev(mode);
+    
+    //strainIncrementVol = computeDeviatoricVolumetricSplit(strainIncrementDev, strainIncrement);
+    strainIncrement.computeDeviatoricVolumetricSplit(strainIncrementDev,strainIncrementVol);
     // Equivalent strain increment
 
-    DEE = sqrt ( 2. / 3. ) * computeStrainNorm(strainIncrementDev);
-
+    //DEE = sqrt ( 2. / 3. ) * computeStrainNorm(strainIncrementDev);
+    DEE = sqrt ( 2. / 3. ) * strainIncrementDev.computeStrainNorm();
+    
     // store the incremental effective deviatoric Strain
     status->setTempDeffTotalStrain(DEE);
 
     
     
-    // Stress Quantities
+    /// Stress Quantities
+    // Stress at the end of the previous step
+    //const FloatArray stress = status->giveStressVector();
+    StressVector stress(status->giveStressVector(), mode); 
 
-    StressVol = computeDeviatoricVolumetricSplit(StressDev, stress);
-
+    //StressVol = computeDeviatoricVolumetricSplit(StressDev, stress);
+    StressVector StressDev(mode);
+    stress.computeDeviatoricVolumetricSplit(StressDev,StressVol);
+    
     // J2 equivalent Stress
-    trialS = sqrt( 3. / 2.) * computeStressNorm(StressDev);
-
+    //trialS = sqrt( 3. / 2.) * computeStressNorm(StressDev);
+    trialS = sqrt( 3. / 2.) * StressDev.computeStressNorm();
+    
     //status->setTempEquivalentStress(trialS);
     // Elastic Strain at previous step ---> computed from Stress
-    FloatArray elStrainDev;
+    StrainVector elStrainDev(mode);
     elStrainDev.zero();
     double elStrainVol = strainVol;
-    applyDeviatoricElasticCompliance(elStrainDev, StressDev, G);
+    //applyDeviatoricElasticCompliance(elStrainDev, StressDev, G);
+    StressDev.applyDeviatoricElasticCompliance(elStrainDev,G);
+    
 
     double totalStrainVol = elStrainVol + strainIncrementVol;
+    // Debug check if totalStrainVol = Volumetric total Strain 
+    double VolumetricTotalStrain;
+    StrainVector DeviatoricTotalStrain(mode);
+    VolumetricTotalStrain = computeDeviatoricVolumetricSplit(DeviatoricTotalStrain, totalStrain);
+    if (fabs(totalStrainVol - VolumetricTotalStrain) > 1.e-10) {
+      OOFEM_ERROR("The total Volumetric strain is not equal to computed value")
+    }
+      
+    
     // StrainTildeDev is the sum of Deviatoric elastic strain at previous and current total
-    FloatArray StrainTildeDev = elStrainDev;
+    StrainVector StrainTildeDev = elStrainDev;
     StrainTildeDev.add(strainIncrementDev);
 
     // Estar is the equivalent StrainTildeDev
-    double EStar = sqrt (2. / 3.) * computeStrainNorm(StrainTildeDev);
+    //double EStar = sqrt (2. / 3.) * computeStrainNorm(StrainTildeDev);
+    double EStar = sqrt (2. / 3.) * StrainTildeDev.computeStrainNorm();
     //stor Estar and sigmaY in status
     status->setTempEstar(EStar);
 
@@ -296,17 +340,17 @@ ViscoPlastic :: performPlasticityReturn(GaussPoint *gp, const FloatArray &totalS
             yieldValue = trialS/sigmaY;
             pama = pow ( yieldValue, m0);
             RHS = 3. * G * ( EStar - DEE * pama) - trialS;
-            h = DEE * pow (( trialS / sigmaY ), ( m0 - 1. )) * m0 / sigmaY;
+            h = m0 * DEE * pow (yieldValue, ( m0 - 1. )) / sigmaY;
             Bot = 1. + 3. * G * h;
             dtrialS = RHS / Bot;
             trialS += dtrialS;
-            if (fabs(trialS) < zero) {
-                trialS = zero;
-            }
             dKappa = EStar - trialS / (3. * G);
             kappa = kappa_init + dKappa;
-            knewton += 1;
-            conv = fabs(dtrialS/trialS);
+	    if (fabs(trialS) < zero) {
+                trialS = zero;
+            }
+	    conv = fabs(dtrialS/trialS);
+	    knewton += 1;
         } while (fabs(dtrialS) > 1.0e-12 && conv > NRtol);
 	newton = false;
 	break;
@@ -324,9 +368,12 @@ ViscoPlastic :: performPlasticityReturn(GaussPoint *gp, const FloatArray &totalS
 
     StressVol = 3. * K * totalStrainVol;
     // Apply Ratio to StrainTildeDev
-    applyDeviatoricElasticStiffness(StressDev, StrainTildeDev, Ratio);
-    computeDeviatoricVolumetricSum(fullStress, StressDev, StressVol);
-
+    StrainTildeDev.applyDeviatoricElasticStiffness(StressDev,Ratio);
+    //applyDeviatoricElasticStiffness(StressDev, StrainTildeDev, Ratio);
+    
+    StressVector fullStress(mode);
+    //computeDeviatoricVolumetricSum(fullStress, StressDev, StressVol);
+    StressDev.computeDeviatoricVolumetricSum(fullStress, StressVol);
     // Calculate Plastic Strain and incremental Plastic Strain
     
     
@@ -335,6 +382,10 @@ ViscoPlastic :: performPlasticityReturn(GaussPoint *gp, const FloatArray &totalS
     dplStrain.beScaled(0.5, StressDev);
     
     dplStrain.times(dKappa * 3. / trialS);
+
+    if (mode == _PlaneStrain){
+      dplStrain.at(3) = 0.0;
+    }
     
     plStrain.add(dplStrain);
 
@@ -353,13 +404,6 @@ ViscoPlastic :: performPlasticityReturn(GaussPoint *gp, const FloatArray &totalS
     // store the effective stress in status
     status->letTempPlasticStrainBe(plStrain);
     status->setTempCumulativePlasticStrain(kappa);
-    /*
-    FloatArray printStrain;
-    printStrain.beDifferenceOf(totalStrain, plStrain);
-    fullStress.printYourself("Stress");
-    strain.printYourself("Strain");
-    strainIncrement.printYourself("Strain Increment");
-    */
 }
 
 void ViscoPlastic :: computeCumPlastStrain(double &tempKappa, GaussPoint *gp, TimeStep *tStep)
@@ -369,37 +413,37 @@ void ViscoPlastic :: computeCumPlastStrain(double &tempKappa, GaussPoint *gp, Ti
 }
 
 
-// returns the consistent (algorithmic) tangent stiffness matrix
+// returns the consistent (algorithmic) tangent stiffness matrix for 3D
 void
 ViscoPlastic :: give3dMaterialStiffnessMatrix(FloatMatrix &answer,
         MatResponseMode mode,
         GaussPoint *gp,
         TimeStep *tStep)
 {
-    
+    this->giveLinearElasticMaterial()->giveStiffnessMatrix(answer, mode, gp, tStep);
     
     if ( mode != TangentStiffness ) {
         return;
     }
     
     ViscoPlasticStatus *status = static_cast< ViscoPlasticStatus * >( this->giveStatus(gp) );
-    /*
     FloatArray tempStrain = status->giveTempStrainVector();
-    FloatArray sig(6), strain(6);
-    if (tempStrain.at(1) == 0.){
-      tempStrain.resize(6);
-    }
-    this->giveRealStressVector_3d(sig, gp, tempStrain, tStep);
-    */
+
+    FloatArray sig, strain, sigPert;
+    giveRealStressVector(sig, gp, tempStrain, tStep);
+
+
     double kappa = status->giveCumulativePlasticStrain();
     double tempKappa = status->giveTempCumulativePlasticStrain();
     // increment of cumulative plastic strain as an indicator of plastic loading
     double dKappa = tempKappa - kappa;
-    /*
+    
     if ( dKappa <= 0.0 ) { // elastic loading - elastic stiffness plays the role of tangent stiffness
         return;
     }
-    */
+    
+    answer.zero();
+
     // === plastic loading ===
 
     double EStar = status->givetempEstar();    
@@ -413,7 +457,7 @@ ViscoPlastic :: give3dMaterialStiffnessMatrix(FloatMatrix &answer,
     
     // Calculate Q, R, h parameters
     double Q, R;
-    double h = DEE * pow((trialS / sigmaY),(m0 - 1.))*m0/sigmaY;
+    double h = m0 * DEE * pow((trialS / sigmaY), (m0 - 1.)) / sigmaY;
 
     if ( fabs(trialS) < 1.e-30 || fabs(EStar) < 1.e-30){
       Q = 2.*G;
@@ -453,6 +497,103 @@ ViscoPlastic :: give3dMaterialStiffnessMatrix(FloatMatrix &answer,
     
 }
 
+void
+ViscoPlastic :: givePlaneStrainStiffMtrx(FloatMatrix &answer,
+        MatResponseMode mode,
+        GaussPoint *gp,
+        TimeStep *tStep)
+{
+
+    this->giveLinearElasticMaterial()->giveStiffnessMatrix(answer, mode, gp, tStep);
+    MaterialMode matmode = gp->giveMaterialMode();
+    if ( mode != TangentStiffness ) {
+        return;
+    } 
+
+    ViscoPlasticStatus *status = static_cast< ViscoPlasticStatus * >( this->giveStatus(gp) );
+    FloatArray tempStrain = status->giveTempStrainVector();
+
+    FloatArray sig, strain, sigPert;
+    giveRealStressVector(sig, gp, tempStrain, tStep);
+    
+
+    
+    double kappa = status->giveCumulativePlasticStrain();
+    double tempKappa = status->giveTempCumulativePlasticStrain();
+    // increment of cumulative plastic strain as an indicator of plastic loading
+    double dKappa = tempKappa - kappa;
+    
+    if ( dKappa <= 0.0 ) { // elastic loading - elastic stiffness plays the role of tangent stiffness
+        //answer.printYourself();
+        return;
+    }
+    
+    // === plastic loading ===
+    answer.zero();
+
+
+    double EStar = status->givetempEstar();    
+    
+    double DEE = status->givetempDeffTotalstrain();
+    
+    double trialS = status->giveTempEquivalentStress();
+        
+    //double sigmaY = sig0 * pow(1. +  Cp * E * kappa / sig0, N);
+    double sigmaY = status->givetempSigmaY();
+    
+    // Calculate Q, R, h parameters
+    double Q, R;
+    double h = m0 * DEE * pow((trialS / sigmaY),(m0 - 1.))/sigmaY;
+
+    if ( fabs(trialS) < 1.e-30 || fabs(EStar) < 1.e-30){
+      Q = 2.*G;
+      R = 0.;
+    }
+    else {
+      Q = 2. / 3. * trialS/EStar;
+      R = 1. / (trialS * EStar) * (h - dKappa/trialS) * (3. * G) / (1. + 3. * G * h);
+    }
+
+    // Stored Deviatoric Trial stress state
+    StressVector fullStressDev(status->giveTrialStressDev(), matmode);
+
+    
+    // Create Stiffness matrix term by term
+    // one correction term
+    FloatMatrix stiffnessCorrection(4, 4);
+    stiffnessCorrection.beDyadicProductOf(fullStressDev, fullStressDev);
+    double factor1 = -1.* R; 
+    stiffnessCorrection.times(factor1);
+    
+    answer.add(stiffnessCorrection);
+    // another correction term
+    stiffnessCorrection.resize(4, 4);
+    stiffnessCorrection.zero();
+    stiffnessCorrection.at(1, 1) = stiffnessCorrection.at(2, 2) = stiffnessCorrection.at(3, 3) = 2. / 3.;
+    stiffnessCorrection.at(1, 2) = stiffnessCorrection.at(1, 3) = stiffnessCorrection.at(2, 1) = -1. / 3.;
+    stiffnessCorrection.at(2, 3) = stiffnessCorrection.at(3, 1) = stiffnessCorrection.at(3, 2) = -1. / 3.;
+    stiffnessCorrection.at(4, 4) = 0.5;
+
+    double factor2 = Q;
+    
+    answer.add(factor2, stiffnessCorrection);
+    
+    stiffnessCorrection.zero();
+    stiffnessCorrection.at(1,1) = stiffnessCorrection.at(1,2) = stiffnessCorrection.at(1,3) = K;
+    stiffnessCorrection.at(2,1) = stiffnessCorrection.at(2,2) = stiffnessCorrection.at(2,3) = K;
+    stiffnessCorrection.at(3,1) = stiffnessCorrection.at(3,2) = stiffnessCorrection.at(3,3) = K;
+
+    answer.add(stiffnessCorrection);
+    //answer.printYourself();
+    
+
+    
+    
+}
+
+
+
+
 #ifdef __OOFEG
 #endif
 
@@ -467,7 +608,11 @@ ViscoPlastic :: giveIPValue(FloatArray &answer, GaussPoint *gp, InternalStateTyp
         answer.resize(1);
         answer.at(1) = status->giveCumulativePlasticStrain();
         return 1;
-    } else {
+    }else if ( type == IST_StressGradient ) {
+        answer.resize(1);
+        answer.at(1) = status->giveXita();
+        return 1;
+    }else {
         return StructuralMaterial :: giveIPValue(answer, gp, type, tStep);
     }
 }
@@ -475,10 +620,8 @@ ViscoPlastic :: giveIPValue(FloatArray &answer, GaussPoint *gp, InternalStateTyp
 //=============================================================================
 
 ViscoPlasticStatus :: ViscoPlasticStatus(int n, Domain *d, GaussPoint *g) :
-    StructuralMaterialStatus(n, d, g), plasticStrain(6), tempPlasticStrain(), trialStressD()
+    StructuralMaterialStatus(n, d, g), plasticStrain(), tempPlasticStrain(), trialStressD()
 {
-    stressVector.resize(6);
-    strainVector.resize(6);
 
     kappa = tempKappa = 0.;
     effStress.resize(6);

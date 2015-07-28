@@ -58,7 +58,7 @@ ViscoPlasticNl :: ~ViscoPlasticNl()
 
 
 void
-ViscoPlasticNl :: giveRealStressVector_3d(FloatArray &answer, GaussPoint *gp,
+ViscoPlasticNl :: giveRealStressVector(FloatArray &answer, GaussPoint *gp,
                                    const FloatArray &totalStrain, TimeStep *tStep)
 {
   
@@ -98,7 +98,7 @@ ViscoPlasticNl :: computeXita(double &xita, GaussPoint *gp, TimeStep *tStep)
     nonlocalXita *= 1. / status->giveIntegrationScale();
 
     double stresseq = status->giveEquivalentStress();
-    if (stresseq > 1.d-3) {
+    if (stresseq > 1.e-3) {
       nonlocalXita *= 1./stresseq;
     }
     if (this->cl > 0.0) {
@@ -132,7 +132,7 @@ ViscoPlasticNl :: updateBeforeNonlocAverage(const FloatArray &strainVector, Gaus
     
     this->computeLocalXita(xita, gp, tStep);
     
-    this->performPlasticityReturn(gp, strainVector);
+    //this->performPlasticityReturn(gp, strainVector);
     
     // this->computeLocalCumPlasticStrain(cumPlasticStrain, gp, tStep);
     // standard formulation based on averaging of equivalent strain
@@ -172,7 +172,7 @@ ViscoPlasticNl :: initializeFrom(InputRecord *ir)
 
 void
 ViscoPlasticNl :: giveInputRecord(DynamicInputRecord &input)
-{
+{ 
     StructuralMaterial :: giveInputRecord(input);
     StructuralNonlocalMaterialExtensionInterface :: giveInputRecord(input);
 
@@ -185,6 +185,7 @@ ViscoPlasticNl :: giveInputRecord(DynamicInputRecord &input)
 ViscoPlasticNlStatus :: ViscoPlasticNlStatus(int n, Domain *d, GaussPoint *g) :
     ViscoPlasticStatus(n, d, g), StructuralNonlocalMaterialStatusExtensionInterface()
 {
+    localXitaForAverage = 0.0;
     localCumPlasticStrainForAverage = 0.0;
 }
 

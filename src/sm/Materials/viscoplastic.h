@@ -86,9 +86,6 @@ protected:
     /// Extra Parameter for hardening
     double Cp;
     
-    /// Intrinsic Length Scale parameter
-    double lobs;
-
     
 
 public:
@@ -112,11 +109,12 @@ public:
 
     virtual void computeCumPlastStrain(double &kappa, GaussPoint *gp, TimeStep *tStep);
 
-    //virtual int hasMaterialModeCapability(MaterialMode mode);
+    virtual int hasMaterialModeCapability(MaterialMode mode);
 
     virtual IRResultType initializeFrom(InputRecord *ir);
 
     virtual int hasNonLinearBehaviour() { return 1; }
+    
     virtual bool isCharacteristicMtrxSymmetric(MatResponseMode rMode) { return false; }
 
     virtual const char *giveInputRecordName() const { return _IFT_ViscoPlastic_Name; }
@@ -142,10 +140,18 @@ public:
                                                     TimeStep *tStep);
 */
 
-    virtual void giveRealStressVector_3d(FloatArray &answer, GaussPoint *gp, const FloatArray &reducedE, TimeStep *tStep);
-//    virtual void giveRealStressVector_1d(FloatArray &answer, GaussPoint *gp, const FloatArray &reducedE, TimeStep *tStep);
+    virtual void giveRealStressVector(FloatArray &answer, GaussPoint *gp,
+                                      const FloatArray &reducedStrain, TimeStep *tStep);
 
-//    virtual void giveFirstPKStressVector_3d(FloatArray &answer, GaussPoint *gp, const FloatArray &vF, TimeStep *tStep);
+    virtual void giveRealStressVector_3d(FloatArray &answer, GaussPoint *gp, const FloatArray &reducedE, TimeStep *tStep)
+    { this->giveRealStressVector(answer, gp, reducedE, tStep); }
+    virtual void giveRealStressVector_PlaneStrain(FloatArray &answer, GaussPoint *gp, const FloatArray &reducedE, TimeStep *tStep)
+    { this->giveRealStressVector(answer, gp, reducedE, tStep); }
+    virtual void giveRealStressVector_PlaneStress(FloatArray &answer, GaussPoint *gp, const FloatArray &reducedE, TimeStep *tStep)
+    { this->giveRealStressVector(answer, gp, reducedE, tStep); }
+    virtual void giveRealStressVector_1d(FloatArray &answer, GaussPoint *gp, const FloatArray &reducedE, TimeStep *tStep)
+    { this->giveRealStressVector(answer, gp, reducedE, tStep); }
+
 
 
 protected:
@@ -157,6 +163,9 @@ protected:
                                                  GaussPoint *gp,
                                                  TimeStep *tStep);
 */
+   // virtual void give1dStressStiffMtrx(FloatMatrix &answer, MatResponseMode mode, GaussPoint *gp, TimeStep *tStep);
+    virtual void givePlaneStrainStiffMtrx(FloatMatrix &answer, MatResponseMode mode, GaussPoint *gp, TimeStep *tStep);
+
     virtual int giveIPValue(FloatArray &answer, GaussPoint *gp, InternalStateType type, TimeStep *tStep);
 };
 

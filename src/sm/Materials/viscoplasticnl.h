@@ -123,11 +123,29 @@ public:
     }
 
     
-    //virtual void givePlaneStrainStiffMtrx(FloatMatrix& answer, MatResponseMode, GaussPoint *gp,TimeStep *tStep);
-    //virtual void give3dMaterialStiffnessMatrix(FloatMatrix& answer, MatResponseMode, GaussPoint *gp, TimeStep *tStep);
+    virtual void givePlaneStrainStiffMtrx(FloatMatrix& answer, MatResponseMode mode, GaussPoint *gp,TimeStep *tStep)
+    {
+      ViscoPlastic :: givePlaneStrainStiffMtrx(answer, mode, gp,tStep);
+    }
+    
+    virtual void give3dMaterialStiffnessMatrix(FloatMatrix& answer, MatResponseMode mode, GaussPoint *gp, TimeStep *tStep)
+    {
+      ViscoPlastic :: give3dMaterialStiffnessMatrix(answer, mode, gp, tStep);
+    }
 
 
-    virtual void giveRealStressVector_3d(FloatArray &answer,  GaussPoint *gp, const FloatArray &strainVector, TimeStep *tStep);
+    virtual void giveRealStressVector(FloatArray &answer, GaussPoint *gp,
+                                      const FloatArray &reducedStrain, TimeStep *tStep);
+
+    virtual void giveRealStressVector_3d(FloatArray &answer, GaussPoint *gp, const FloatArray &reducedE, TimeStep *tStep)
+    { this->giveRealStressVector(answer, gp, reducedE, tStep); }
+    virtual void giveRealStressVector_PlaneStrain(FloatArray &answer, GaussPoint *gp, const FloatArray &reducedE, TimeStep *tStep)
+    { this->giveRealStressVector(answer, gp, reducedE, tStep); }
+    virtual void giveRealStressVector_PlaneStress(FloatArray &answer, GaussPoint *gp, const FloatArray &reducedE, TimeStep *tStep)
+    { this->giveRealStressVector(answer, gp, reducedE, tStep); }
+    virtual void giveRealStressVector_1d(FloatArray &answer, GaussPoint *gp, const FloatArray &reducedE, TimeStep *tStep)
+    { this->giveRealStressVector(answer, gp, reducedE, tStep); }
+
     
      /**
      * Computes the nonlocal Stress Gradient parameter
