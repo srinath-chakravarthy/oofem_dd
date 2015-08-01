@@ -243,12 +243,12 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
                                     sp0.getContainer<dd::ObstaclePoint>().rend());
 
         std::cout << "Dislocation point count: " << sp0.getContainer<dd::DislocationPoint>().size() << "\n";
-        dd::Vector<2> force, v2;
+        dd::Vector<2> force, forceGradient;
         dd::Vector<3> stress;
 	
 	    oofem::FloatArray force_dd;
 
-        dis0.addForceContribution<dd::DislocationPoint>(force, v2, stress);
+        dis0.addForceContribution<dd::DislocationPoint>(force, forceGradient, stress);
 	
 	/** Procedure to calculate force on each dislocation 
 	 * Loop through all DislocationPoints, and SourcePoints
@@ -273,6 +273,12 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
 	/// The total force on any Point is equal to the interaction force + burgers_vec_mag*burg_direction*((stress[1]-stress[2])*cos2i) + stress[3]*sin2i/2.)
 	
         std::cout << force[0] << " " << force[1] << "\n";
+        
+        dd_domain.updateForceCaches();
+        dis0.sumCaches(force, forceGradient, stress);
+        
+        std::cout << "Cached Force: " << force[0] << " " << force[1];
+        
 		delete interface;
     }
 
