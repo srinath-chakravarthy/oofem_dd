@@ -23,6 +23,7 @@ namespace dd {
     class Point;
     class DislocationPoint;
     class DdCounter;
+    class FemInterface;
 
     /**
      * Problem domain.
@@ -33,10 +34,10 @@ namespace dd {
         double propModulus;                   /*!< Young's modulus ratio in this Domain */
         double propPassionsRatio;             /*!< Poisson's ratio in this Domain */ 
         std::vector<SlipSystem *> sSystems;   /*!< Container to Slipsystems for this domain */    
-        oofem::DDLinearStatic * engModel;
+        FemInterface * femInterface;
     public:
 	    /// Constructor to create domain Material Properties->modulus, poisson
-	    Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio);
+	    Domain(const double & propModulus, const double & propPassionsRatio, FemInterface * femInterface = nullptr);
       
         virtual void updateForceCaches();
       
@@ -51,7 +52,8 @@ namespace dd {
                                         Vector<2> &forceGradient, Vector<3> &stress) const;
       
         void addSlipSystem(SlipSystem * ss);
-
+      	virtual void setFemInterface(FemInterface * femInterface);
+      	virtual FemInterface * getFemInterface() const;
 
         double getModulus() const;
         double getPassionsRatio() const;

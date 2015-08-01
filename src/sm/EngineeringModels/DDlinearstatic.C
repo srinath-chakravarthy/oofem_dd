@@ -71,7 +71,7 @@
 #include <list>
 #include "../dd/complex.h"
 #include "../dd/vector.h"
-#include "../dd/hashedregistrable.h"
+#include "../dd/feminterface/oofeminterface.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
 
@@ -227,7 +227,8 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         /// Each domain for the DD case can have only one material... throw error otherwise
         //// Also the DD_domains should be intialized with these materials properties during input
         //// Here i am just using values from input file for algorithmic convenience
-        dd::Domain dd_domain(this, 70e9,0.3);
+        dd::FemInterface * interface = new dd::OofemInterface(this);
+        dd::Domain dd_domain(70e9, 0.3, interface);
         dd::SlipSystem ss0 = dd::SlipSystem(M_PI/6.0, 0.25e-9);
         dd_domain.addSlipSystem(&ss0);
 
@@ -272,7 +273,7 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
 	/// The total force on any Point is equal to the interaction force + burgers_vec_mag*burg_direction*((stress[1]-stress[2])*cos2i) + stress[3]*sin2i/2.)
 	
         std::cout << force[0] << " " << force[1] << "\n";
-
+		delete interface;
     }
 
 

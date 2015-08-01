@@ -11,6 +11,8 @@
     timemanager.cpp
     ddcounter.cpp
     forcecache.cpp
+    feminterface/feminterface.cpp
+    feminterface/oofeminterface.cpp
     )
   
 add_library(dd

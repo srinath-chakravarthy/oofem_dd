@@ -4,9 +4,7 @@
 #include "vector.h"
 #include "point/dislocation.h"
 #include "point/source.h"
-#include <cmath>
-#include "complex.h"
-#include <string>
+#include "feminterface/feminterface.h"
 
 #include "../sm/EngineeringModels/DDlinearstatic.h"
 #include "spatiallocalizer.h"
@@ -17,9 +15,11 @@
 
 namespace dd {
 
-    Domain::Domain(oofem::DDLinearStatic * engModel, const double & propModulus, const double & propPassionsRatio) :
+    Domain::Domain(const double & propModulus, const double & propPassionsRatio, FemInterface * femInterface) :
         propModulus(propModulus), propPassionsRatio(propPassionsRatio),
-        engModel(engModel) { }
+        femInterface(femInterface) { 
+    	femInterface->setDomain(this);    
+    }
         
     void Domain::updateForceCaches()  {
         for(auto keyValue : containers) {
@@ -32,6 +32,8 @@ namespace dd {
         
     void Domain::addFEMContribution(const Point * point, Vector<2> &force,
                             Vector<2> &forceGradient, Vector<3> &stress) const {
+        femInterface->addFEMContribution(point, force, forceGradient, stress);
+        /*
         for(int i = 1; i <= engModel->giveNumberOfDomains(); i++) {
             oofem::FloatArray localCoordinates, strainElem, stressElem;
             oofem::Element * e = engModel->giveDomain(i)->giveSpatialLocalizer()->giveElementContainingPoint(point->getLocation());
@@ -48,8 +50,11 @@ namespace dd {
                        stressElem[3] * point->getSlipPlane()->getSin() / 2);
                 
         }
+        */
     }
-
+    
+    void Domain::setFemInterface(FemInterface * femInterface) { this->femInterface = femInterface; }
+    FemInterface * Domain::getFemInterface() const { return this->femInterface; }
     double Domain::getModulus() const { return propModulus; }
     double Domain::getPassionsRatio() const { return propPassionsRatio; }
 
