@@ -21,6 +21,8 @@ namespace dd {
         virtual Domain * getDomain() { return this->domain; }
         virtual void addFEMContribution(const Point * point, Vector<2> &force,
                                         Vector<2> &forceGradient, Vector<3> &stress) = 0;
+        virtual void giveNodalBcContribution(const Vector<2> & coords,
+                                             Vector<2> &bcContribution);
                                         
         virtual string typeName() const { return FEMINTERFACE_NAME; }
         static string staticTypeName() { return FEMINTERFACE_NAME; }

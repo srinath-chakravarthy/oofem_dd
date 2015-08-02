@@ -47,6 +47,8 @@
 #include "classfactory.h"
 #include "unknownnumberingscheme.h"
 #include "spatiallocalizer.h"
+#include "generalboundarycondition.h"
+#include "node.h"
 
 #ifdef __PARALLEL_MODE
 #include "problemcomm.h"
@@ -67,7 +69,6 @@
 #include "../dd/point/dislocation.h"
 #include "../dd/point/obstacle.h"
 #include "../dd/point/source.h"
-#include <string>
 #include <list>
 #include "../dd/complex.h"
 #include "../dd/vector.h"
@@ -279,6 +280,23 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         for(auto point : dd_domain.getContainer<dd::DislocationPoint>()) {
         	point->sumCaches(force, forceGradient, stress);
         	std::cout << "Cached Force: " << force[0] << " " << force[1];
+        }
+        
+        for(int bcNo = 1; bcNo <= giveDomain(i)->giveNumberOfBoundaryConditions(); bcNo++) {
+        	GeneralBoundaryCondition * bc = giveDomain(i)->giveBc(bcNo);
+        	if(bc->giveBCGeoType() != NodalLoadBGT) { continue; }
+        	
+        	dd::Vector<2> bcContribution;
+        	
+        	for(int dofManagerNo = 1; dofManagerNo <= bc->giveNumberOfInternalDofManagers(); dofManagerNo++) {
+        		Node * node = dynamic_cast<Node *>(bc->giveInternalDofManager(dofManagerNo));
+        		if(node == nullptr) { continue; }
+        		FloatArray * coords = node->giveCoordinates();
+        		interface->giveNodalBcContribution(dd::Vector<2>({coords->at(1), coords->at(2)}), bcContribution);
+        	}
+        
+            std::cout << "BC Contribution: " << bcContribution[0] << " " << bcContribution[1] << "\n";
+            
         }
         
 		delete interface;

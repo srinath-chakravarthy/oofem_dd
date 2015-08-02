@@ -15,6 +15,8 @@ namespace dd {
         Complex(const double & real, const double & imag) :
             std::complex<double>(real, imag) { }
 
+        Complex() : Complex(0., 0.) { }
+
         Complex(const std::complex<double> & comp) :
             Complex(comp.real(), comp.imag()) { }
 

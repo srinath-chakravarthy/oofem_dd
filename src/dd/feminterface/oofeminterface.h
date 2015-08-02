@@ -22,7 +22,6 @@ namespace dd {
     
         virtual void addFEMContribution(const Point * point, Vector<2> &force,
                                         Vector<2> &forceGradient, Vector<3> &stress);
-        
         virtual string typeName() const { return OOFEMINTERFACE_NAME; }
         static string staticTypeName() { return OOFEMINTERFACE_NAME; }
     };
