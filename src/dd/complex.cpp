@@ -15,4 +15,5 @@ namespace dd {
 
     double Complex::abs() const { return std::abs(*this); }
     Complex Complex::conjugate() const { return Complex(real(), -imag()); }
+    Complex Complex::log() const { return std::log(*this); }
 }

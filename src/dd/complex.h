@@ -46,6 +46,7 @@ namespace dd {
 
         double abs() const;
         Complex conjugate() const;
+        Complex log() const;
 
         virtual string typeName() const { return COMPLEX_NAME; }
         static string staticTypeName() { return COMPLEX_NAME; }

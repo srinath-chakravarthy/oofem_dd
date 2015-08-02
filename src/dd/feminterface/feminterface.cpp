@@ -33,8 +33,8 @@ namespace dd {
             double zd = dz.abs();
             
             if(zd > cutOff) {
-                Complex phi = -Complex::i * fac2 * b * log(slip.conjugate() * dz);
-                Complex xsi = Complex::i * fac2 * b.conjugate() * log(slip.conjugate() * dz);
+                Complex phi = -Complex::i * fac2 * b * (slip.conjugate() * dz).log();
+                Complex xsi = Complex::i * fac2 * b.conjugate() * (slip.conjugate() * dz).log();
                 Complex dphi = -Complex::i * b * fac2 / dz;
                 uu = (kappa * phi - dz * dphi.conjugate() - xsi.conjugate()) / factor;
             }
