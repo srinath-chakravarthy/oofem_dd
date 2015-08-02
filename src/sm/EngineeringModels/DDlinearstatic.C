@@ -275,9 +275,11 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         std::cout << force[0] << " " << force[1] << "\n";
         
         dd_domain.updateForceCaches();
-        dis0.sumCaches(force, forceGradient, stress);
         
-        std::cout << "Cached Force: " << force[0] << " " << force[1];
+        for(auto point : dd_domain.getContainer<dd::DislocationPoint>()) {
+        	point->sumCaches(force, forceGradient, stress);
+        	std::cout << "Cached Force: " << force[0] << " " << force[1];
+        }
         
 		delete interface;
     }
