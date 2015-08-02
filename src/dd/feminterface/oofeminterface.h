@@ -5,6 +5,8 @@
 
 namespace oofem {
     class DDLinearStatic;
+    class Node;
+    class GeneralBoundaryCondition;
 }
 
 namespace dd {
@@ -24,6 +26,9 @@ namespace dd {
                                         Vector<2> &forceGradient, Vector<3> &stress);
         virtual string typeName() const { return OOFEMINTERFACE_NAME; }
         static string staticTypeName() { return OOFEMINTERFACE_NAME; }
+    
+        virtual void giveNodalBcContribution(oofem::Node * node, Vector<2> &bcContribution);
+        virtual void giveNodalBcContribution(oofem::GeneralBoundaryCondition * bc, Vector<2> &bcContribution);
     };
 
 }

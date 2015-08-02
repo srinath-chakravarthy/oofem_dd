@@ -1,6 +1,7 @@
 #include "oofeminterface.h"
-#include "domain.h"
+#include "../domain.h"
 #include "point.h"
+#include "../vector.h"
 
 #include "../../sm/EngineeringModels/DDlinearstatic.h"
 #include "spatiallocalizer.h"
@@ -8,6 +9,8 @@
 #include "../../oofemlib/domain.h"
 #include "gausspoint.h"
 #include "../../sm/Elements/structuralelement.h"
+#include "generalboundarycondition.h"
+#include "node.h"
 
 
 namespace dd {
@@ -32,6 +35,17 @@ namespace dd {
         } 
     }
     
-    
+    void OofemInterface::giveNodalBcContribution(oofem::Node * node, Vector<2> &bcContribution) {
+        FemInterface::giveNodalBcContribution({node->giveCoordinates()->at(1), node->giveCoordinates()->at(2)}, bcContribution);
+    }
+    void OofemInterface::giveNodalBcContribution(oofem::GeneralBoundaryCondition * bc, Vector<2> &bcContribution) {
+        if(bc->giveType() == oofem::DirichletBT) {
+            for(int dofManagerNo = 1; dofManagerNo <= bc->giveNumberOfInternalDofManagers(); dofManagerNo++) {
+            	oofem::Node * node = dynamic_cast<oofem::Node *>(bc->giveInternalDofManager(dofManagerNo));
+            	if(node == nullptr) { continue; }
+            	giveNodalBcContribution(node, bcContribution);
+            }
+        }
+    }
 
 }
