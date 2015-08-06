@@ -49,6 +49,7 @@
 #include "spatiallocalizer.h"
 #include "generalboundarycondition.h"
 #include "node.h"
+#include "manualboundarycondition.h"
 
 #ifdef __PARALLEL_MODE
 #include "problemcomm.h"
@@ -283,8 +284,8 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         }
         
         for(int bcNo = 1; bcNo <= giveDomain(i)->giveNumberOfBoundaryConditions(); bcNo++) {
-        	GeneralBoundaryCondition * bc = giveDomain(i)->giveBc(bcNo);
-        	if(bc->giveType() != DirichletBT) { continue; }
+        	ManualBoundaryCondition * bc = dynamic_cast<ManualBoundaryCondition *>(giveDomain(i)->giveBc(bcNo));
+        	if(bc == nullptr || bc->giveType() != DirichletBT) { continue; }
         	
         	dd::Vector<2> bcContribution;
         	
@@ -294,9 +295,9 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         		interface->giveNodalBcContribution(node, bcContribution);
         	}
         	
-        
             std::cout << "BC Contribution: " << bcContribution[0] << " " << bcContribution[1] << "\n";
             
+            bc->addManualValues(bcContribution);            
         }
         
 		delete interface;
