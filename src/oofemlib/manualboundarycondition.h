@@ -26,9 +26,9 @@ public:
     /// Destructor
     virtual ~ManualBoundaryCondition() { }
 
-    virtual FloatArray getManualValues() const;
-    virtual void setManualValues(const FloatArray & values);
-    virtual void addManualValues(const FloatArray & values);
+    virtual double getManualValue(Dof * dof) const;
+    virtual void setManualValue(Dof *dof, const double & val);
+    virtual void addManualValue(Dof *dof, const double & val);
     virtual double give(Dof *dof, ValueModeType mode, TimeStep *tStep);
     virtual double give(Dof *dof, ValueModeType mode, double time);
 

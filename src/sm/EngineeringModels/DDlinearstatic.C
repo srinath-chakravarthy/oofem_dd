@@ -289,15 +289,40 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         	
         	dd::Vector<2> bcContribution;
         	
+        	Domain * d = bc->giveDomain();
+        	Set * set = d->giveSet(bc->giveSetNumber());
+        	
+        	for(int nodeNo : set->giveNodeList()) {
+                Node * node = static_cast<Node *>(d->giveDofManager(nodeNo));
+                for (auto &dofid : bc->giveDofIDs()) {
+                    Dof * dof = node->giveDofWithID(dofid);
+                    interface->giveNodalBcContribution(node, bcContribution);
+                    // TODO: Determine the dimensions without pointer checking
+                    double toAdd;
+                    if(dof->giveDofID() == D_u) {
+                        toAdd = bcContribution[0];
+                    }
+                    else if(dof->giveDofID() == D_v) {
+                        toAdd = bcContribution[1];
+                    }
+                    else { 
+                        OOFEM_ERROR("DOF must be x-disp or y-disp");
+                    }
+                    bc->addManualValue(dof, toAdd);
+                }
+            }
+        	
+        	/*
         	for(int dofManagerNo = 1; dofManagerNo <= bc->giveNumberOfInternalDofManagers(); dofManagerNo++) {
         		Node * node = dynamic_cast<Node *>(bc->giveInternalDofManager(dofManagerNo));
         		if(node == nullptr) { continue; }
         		interface->giveNodalBcContribution(node, bcContribution);
-        	}
+        	} 
+        	*/
         	
             std::cout << "BC Contribution: " << bcContribution[0] << " " << bcContribution[1] << "\n";
             
-            bc->addManualValues(bcContribution);            
+            //bc->addManualValues(bcContribution);            
         }
         
 		delete interface;

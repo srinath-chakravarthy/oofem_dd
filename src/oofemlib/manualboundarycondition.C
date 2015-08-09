@@ -1,5 +1,5 @@
 #include "manualboundarycondition.h"
-#include "boundarycondition.h"
+#include "dof.h"
 #include "timestep.h"
 #include "function.h"
 #include "verbose.h"
@@ -11,12 +11,18 @@
 namespace oofem {
 REGISTER_BoundaryCondition(ManualBoundaryCondition);
 
-FloatArray
-ManualBoundaryCondition :: getManualValues() const { return manualValues; }
+double
+ManualBoundaryCondition :: getManualValue(Dof * dof) const { 
+	return manualValues.at(this->dofs.findFirstIndexOf(dof->giveDofID())); 
+}
 void 
-ManualBoundaryCondition :: setManualValues(const FloatArray & values) { manualValues = values; }
+ManualBoundaryCondition :: setManualValue(Dof * dof, const double & val) { 
+	manualValues.at(this->dofs.findFirstIndexOf(dof->giveDofID())) = val; 
+}
 void 
-ManualBoundaryCondition :: addManualValues(const FloatArray & values) { manualValues += values; }
+ManualBoundaryCondition :: addManualValue(Dof * dof, const double & val) { 
+	manualValues.at(this->dofs.findFirstIndexOf(dof->giveDofID())) += val; 
+}
 
 double ManualBoundaryCondition :: give(Dof *dof, ValueModeType mode, TimeStep *tStep){
     return this->give(dof, mode, tStep->giveIntrinsicTime());
