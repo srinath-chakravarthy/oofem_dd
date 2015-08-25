@@ -37,15 +37,7 @@ namespace dd {
         setCaches();
     }
 
-    void DislocationPoint::move() {
-
-    }
-
     void DislocationPoint::spawn() {
-
-    }
-
-    void DislocationPoint::remove() {
 
     }
 }

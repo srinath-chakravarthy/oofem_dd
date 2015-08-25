@@ -35,10 +35,11 @@ namespace dd {
         double getSin() const { return sin; }
         double getCos() const { return cos; }
         double getBurgersMagnitude() const { return bMag; }
+        std::list<SlipPlane *> & getSlipPlanes() { return sPlanes; }
         Vector2d getDirection() const { return directionVector; }
         virtual Vector2d getPointPosition(const double & slipPlaneLocation,
                                           const Vector2d & slipPlaneOrigin) const;
-
+        
         virtual string typeName() const { return SLIPSYSTEM_NAME; }
         static string staticTypeName() { return SLIPSYSTEM_NAME; }
     };

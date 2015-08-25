@@ -51,6 +51,9 @@ namespace dd {
         virtual void addFEMContribution(const Point * point, Vector<2> &force,
                                         Vector<2> &forceGradient, Vector<3> &stress) const;
       
+      
+        virtual void moveDislocations(double dt, double b);
+      
         void addSlipSystem(SlipSystem * ss);
       	virtual void setFemInterface(FemInterface * femInterface);
       	virtual FemInterface * getFemInterface() const;

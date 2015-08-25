@@ -2,6 +2,7 @@
 #define VECTOR_H
 
 #include <initializer_list>
+#include <cmath>
 #include "../oofemlib/floatarray.h"
 
 namespace dd {
@@ -46,6 +47,14 @@ namespace dd {
            for(unsigned i = 0; i < size; i++) {
                 data[i] = value;
             }
+        }
+        
+        double abs() const {
+            double sum = 0;
+            for(int i = 0; i < getSize(); i++) {
+                sum += data[i] * data[i];
+            }
+            return ::sqrt(sum);
         }
 
         /**

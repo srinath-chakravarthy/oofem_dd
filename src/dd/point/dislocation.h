@@ -27,14 +27,8 @@ namespace dd {
                          
         virtual int getBurgersSign() const { return burgersSign; }
 
-        virtual bool canMove() const { return true; }
-        virtual void move();
-
         virtual bool canSpawn() const { return true; }
         virtual void spawn();
-
-        virtual bool canRemove() const { return true; }
-        virtual void remove();
 
         virtual string typeName() const { return DISLOCATIONPOINT_NAME; }
         static string staticTypeName() { return DISLOCATIONPOINT_NAME; }

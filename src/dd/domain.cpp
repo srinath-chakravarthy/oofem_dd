@@ -33,24 +33,14 @@ namespace dd {
     void Domain::addFEMContribution(const Point * point, Vector<2> &force,
                             Vector<2> &forceGradient, Vector<3> &stress) const {
         femInterface->addFEMContribution(point, force, forceGradient, stress);
-        /*
-        for(int i = 1; i <= engModel->giveNumberOfDomains(); i++) {
-            oofem::FloatArray localCoordinates, strainElem, stressElem;
-            oofem::Element * e = engModel->giveDomain(i)->giveSpatialLocalizer()->giveElementContainingPoint(point->getLocation());
-            e->computeLocalCoordinates(localCoordinates, point->getLocation());
-               
-            oofem::GaussPoint gp(e->giveDefaultIntegrationRulePtr(), -1,
-                                 localCoordinates, 1, e->giveMaterialMode());
-            oofem::StructuralElement * se = static_cast<oofem::StructuralElement *>(e);
-            se->computeStrainVector(strainElem, &gp, engModel->giveCurrentStep());
-            se->computeStressVector(stressElem, strainElem, &gp, engModel->giveCurrentStep());
-                        
-            force += point->getBurgersMagnitude() * point->getBurgersSign() *
-                     (((stressElem[1] - stressElem[2]) * point->getSlipPlane()->getCos()) + 
-                       stressElem[3] * point->getSlipPlane()->getSin() / 2);
-                
-        }
-        */
+    }
+    
+    void Domain::moveDislocations(double dt, double b) {
+        for(auto slipSystem : sSystems) {
+            for(auto slipPlane : slipSystem->getSlipPlanes()) {
+                slipPlane->moveDislocations(dt, b);
+            }
+        } 
     }
     
     void Domain::setFemInterface(FemInterface * femInterface) { this->femInterface = femInterface; }

@@ -6,16 +6,8 @@
 #include "forcefunctor/fromfem.h"
 #include "dderror.h"
 namespace dd {
-    void Point::move() {
-        DdError::exception("Point cannot move.");
-    }
-
     void Point::spawn() {
         DdError::exception("Point cannot spawn.");
-    }
-
-    void Point::remove() {
-        DdError::exception("Point cannot be removed.");
     }
 
     double Point::getBurgersMagnitude() const {
@@ -111,16 +103,12 @@ namespace dd {
         }
     }
     
-    void Point::updateLocation() {
-        if(projectedLocation == nullptr) { 
-            DdError::exception("Projected location not set.");
-        }
-        if(getSlipPlane() != projectedLocation->slipPlane) {
+    void Point::updateLocation(PointLog projectedLocation) {
+        if(getSlipPlane() != projectedLocation.slipPlane) {
             DdError::exception("Unimplemented.");
         }
-        slipPlanePosition = projectedLocation->slipPlanePosition;
-        history.push_front(projectedLocation);
-        projectedLocation = nullptr;
+        slipPlanePosition = projectedLocation.slipPlanePosition;
+        history.push_front(new PointLog(projectedLocation));
     }
 }
 

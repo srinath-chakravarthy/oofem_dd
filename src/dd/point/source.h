@@ -38,8 +38,6 @@ namespace dd {
         double getStrength() const { return 0; }
         double getLength() const { return 0; }
 
-        virtual bool canMove() const { return false; }
-
         virtual bool canSpawn() const { return true; }
         virtual void spawn();
 

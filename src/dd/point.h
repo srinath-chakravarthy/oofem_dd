@@ -29,7 +29,6 @@ namespace dd {
     class Point : public DdObject {
 #define POINT_NAME "Point"
     protected:
-        PointLog * projectedLocation;
         std::list<PointLog *> history;
         std::vector<ForceCache> caches;
         Registration<Point, Domain> * domainRegistration = nullptr; /*!< Pointer to a registered Domain */
@@ -138,6 +137,8 @@ namespace dd {
         SlipPlane * getSlipPlane() const { return sPlaneRegistration->getTarget(); }
         /// Returns Position on the SlipPlane containing the point
         Vector<2> getLocation() const { return getSlipPlane()->getPointPosition(slipPlanePosition); }
+        
+        double getSlipPlanePosition() const { return slipPlanePosition; }
 
 
     /**
@@ -145,12 +146,8 @@ namespace dd {
 	 * The inherited class will define the method
 	 */ 
         virtual int getBurgersSign() const;
-        virtual bool canMove() const = 0;
-        virtual void move();
         virtual bool canSpawn() const = 0;
         virtual void spawn();
-        virtual bool canRemove() const = 0;
-        virtual void remove();
 
         double getBurgersMagnitude() const; /*!< Return Magnitude of BurgersVector from base slipsystem */
         Vector2d getBurgersVector() const; /* !< Return Burgers Vector from bas SlipSystem */ 
@@ -213,7 +210,7 @@ namespace dd {
         /**
          * Update the location
          */
-        virtual void updateLocation();
+        virtual void updateLocation(PointLog projectedLocation);
 
         virtual string typeName() const { return POINT_NAME; }
         static string staticTypeName() { return POINT_NAME; }

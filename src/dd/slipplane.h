@@ -26,9 +26,11 @@ namespace dd {
         Vector2d getBurgersVector() const;
         SlipSystem * getSlipSystem() const;
         Vector2d getOrigin() const;
+        
+        void moveDislocations(double dt, double b);
 	
 	/// Global x, y position of a point
-        Vector2d getPointPosition(const double & slipPlaneLocation) const;
+        Vector<2> getPointPosition(const double & slipPlaneLocation) const;
 
         virtual string typeName() const { return SLIPPLANE_NAME; }
         static string staticTypeName() { return SLIPPLANE_NAME; }

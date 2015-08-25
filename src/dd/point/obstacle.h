@@ -22,13 +22,7 @@ namespace dd {
 
         double getStrength() const { return 0; }
 
-
-        virtual bool canMove() const { return false; }
-
         virtual bool canSpawn() const { return false; }
-
-        virtual bool canRemove() const { return true; }
-        virtual void remove();
 
         virtual string typeName() const { return OBSTACLEPOINT_NAME; }
         static string staticTypeName() { return OBSTACLEPOINT_NAME; }
