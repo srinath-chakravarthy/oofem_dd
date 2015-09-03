@@ -102,6 +102,8 @@ namespace dd {
             auto nextIt = it;
             nextIt--;
             
+            if(static_cast<DislocationPoint *>(*it)->getPin()) { continue; }
+            
             if((*it)->getBurgersSign() == (*nextIt)->getBurgersSign()) {
                 projections[i - 1] = std::min(projections[i - 1],
                                            projections[i] - 2 * getBurgersMagnitude());
