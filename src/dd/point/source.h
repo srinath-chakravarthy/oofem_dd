@@ -2,7 +2,6 @@
 #define SOURCE_H
 
 #include "point.h"
-#include "betweenpoints.h"
 
 namespace dd {
     class Domain;

@@ -1,8 +1,6 @@
 #ifndef DISLOCATION_H
 #define DISLOCATION_H
 
-#include "betweenpoints.h"
-
 namespace dd {
 
     class Point;
