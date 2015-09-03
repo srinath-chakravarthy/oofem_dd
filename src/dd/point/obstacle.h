@@ -15,20 +15,20 @@ namespace dd {
     private:
         DislocationPoint * __negativePinned = nullptr;
         DislocationPoint * __positivePinned = nullptr;
-        
+        double __strength;
         bool checkRelease(const DislocationPoint * point) const;
     public:
-        ObstaclePoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition) :
-            Point(slipPlanePosition) {
+        ObstaclePoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, double strength = 0) :
+            Point(slipPlanePosition), __strength(strength) {
             setRegistrations(domain, sPlane);
         }
         ObstaclePoint(Domain * domain, SlipPlane * sPlane,
-                      typename list<Point *>::iterator antecedentIt, double slipPlanePosition) :
-            Point(slipPlanePosition) {
+                      typename list<Point *>::iterator antecedentIt, double slipPlanePosition, double strength = 0) :
+            Point(slipPlanePosition), __strength(strength) {
             setRegistrations(domain, sPlane, antecedentIt);
         }
         
-        virtual double strength() const { return 0; }
+        double strength() const { return __strength; }
         
         virtual DislocationPoint * negativePinned() const { return __negativePinned; }
         virtual DislocationPoint * positivePinned() const { return __positivePinned; }

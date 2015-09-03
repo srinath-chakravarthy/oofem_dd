@@ -10,31 +10,24 @@ namespace dd {
     class SourcePoint : public Point {
 #define SOURCEPOINT_NAME "SourcePoint"
     private:
-        double strength;
-        double length;
+        double __strength;
     public:
 
-        SourcePoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, double strength, double length) :
+        SourcePoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, double strength = 0) :
             Point(slipPlanePosition),
-            strength(strength),
-            length(length) {
+            __strength(strength) {
             setRegistrations(domain, sPlane);
         }
         SourcePoint(Domain * domain, SlipPlane * sPlane,
-                    list<Point *>::iterator antecedentIt, double slipPlanePosition, double strength, double length) :
+                    list<Point *>::iterator antecedentIt, double slipPlanePosition, double strength = 0) :
             Point(slipPlanePosition),
-            strength(strength),
-            length(length) {
+            __strength(strength) {
             setRegistrations(domain, sPlane, antecedentIt);
         }
+        
+        double strength() const { return __strength; }
 
-        double getStrength() const { return 0; }
-        double getLength() const { return 0; }
-
-        virtual bool canSpawn() const { return true; }
-        virtual void spawn();
-
-        virtual bool canRemove() const { return true; }
+        
 
         virtual string typeName() const { return SOURCEPOINT_NAME; }
         static string staticTypeName() { return SOURCEPOINT_NAME; }

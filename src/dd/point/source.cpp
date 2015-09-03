@@ -3,8 +3,6 @@
 
 namespace dd {
 
-    void SourcePoint::spawn() {
 
-    }
 
 }
