@@ -2,6 +2,7 @@
 #include "point.h"
 #include "point/obstacle.h"
 #include "point/dislocation.h"
+#include "dderror.h"
 
 namespace dd {
         
@@ -26,6 +27,21 @@ namespace dd {
         else if(releasePositive) {
             __positivePinned->updateLocation(__positivePinned->getSlipPlanePosition() - 4 * __positivePinned->getBurgersMagnitude());
             __positivePinned = nullptr;        
+        }
+    }
+    
+    void ObstaclePoint::pin(DislocationPoint * point) {
+        if(point->getBurgersSign() == 1) {
+            if(__negativePinned == point) { return; }
+            if(__negativePinned) { DdError::exception("Obstacle has a dislocation pinned at the negative side."); }
+            __negativePinned = point;
+            point->pinTo(this);
+        }
+        else {
+            if(__positivePinned == point) { return; }
+            if(__positivePinned) { DdError::exception("Obstacle has a dislocation pinned at the positive side."); }
+            __positivePinned = point;
+            point->pinTo(this);
         }
     }
 

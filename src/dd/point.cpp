@@ -6,10 +6,6 @@
 #include "forcefunctor/fromfem.h"
 #include "dderror.h"
 namespace dd {
-    void Point::spawn() {
-        DdError::exception("Point cannot spawn.");
-    }
-
     double Point::getBurgersMagnitude() const {
         return getSlipPlane()->getBurgersMagnitude();
     }

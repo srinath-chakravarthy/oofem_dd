@@ -146,8 +146,6 @@ namespace dd {
 	 * The inherited class will define the method
 	 */ 
         virtual int getBurgersSign() const;
-        virtual bool canSpawn() const = 0;
-        virtual void spawn();
 
         double getBurgersMagnitude() const; /*!< Return Magnitude of BurgersVector from base slipsystem */
         Vector2d getBurgersVector() const; /* !< Return Burgers Vector from bas SlipSystem */ 

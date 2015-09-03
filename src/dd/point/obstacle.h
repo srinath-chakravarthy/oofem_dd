@@ -10,8 +10,8 @@ namespace dd {
 
     class ObstaclePoint : public Point {
 #define OBSTACLEPOINT_NAME "OBSTACLEPOINT"
-    // INVARIANT: If exists, __negativePinned has positive BurgersSign and is at the negative side of the Obstacle
-    // INVARIANT: If exists, __positivePinned has negative BurgersSign and is at the positive side of the Obstacle
+    // INVARIANT: If exists, __negativePinned has positive BurgersSign
+    // INVARIANT: If exists, __positivePinned has negative BurgersSign
     private:
         DislocationPoint * __negativePinned = nullptr;
         DislocationPoint * __positivePinned = nullptr;
@@ -32,6 +32,7 @@ namespace dd {
         
         virtual DislocationPoint * negativePinned() const { return __negativePinned; }
         virtual DislocationPoint * positivePinned() const { return __positivePinned; }
+        virtual void pin(DislocationPoint * point);
         virtual void release();
 
         virtual string typeName() const { return OBSTACLEPOINT_NAME; }

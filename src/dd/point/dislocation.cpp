@@ -7,6 +7,7 @@
 #include "../forcefunctor/fromdislocations.h"
 #include "../forcefunctor/fromfem.h"
 #include "domain.h"
+#include "point/obstacle.h"
 
 namespace dd {
 
@@ -31,7 +32,12 @@ namespace dd {
         setCaches();
     }
 
-    void DislocationPoint::spawn() {
-
+    void DislocationPoint::pinTo(ObstaclePoint * obstacle) {
+        if(__pin) {
+            DdError::exception("Already pinned.");
+        }
+        if(__pin == obstacle) { return; }
+        __pin = obstacle;
+        obstacle->pin(this);
     }
 }

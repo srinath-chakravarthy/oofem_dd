@@ -1,6 +1,8 @@
 #ifndef DISLOCATION_H
 #define DISLOCATION_H
 
+#include "../dderror.h"
+
 namespace dd {
 
     class Point;
@@ -12,6 +14,7 @@ namespace dd {
 #define DISLOCATIONPOINT_NAME "DislocationPoint"
     private:
         int burgersSign;
+        ObstaclePoint * __pin = nullptr;
         void setCaches();
     public:
 
@@ -21,8 +24,8 @@ namespace dd {
                          
         virtual int getBurgersSign() const { return burgersSign; }
 
-        virtual bool canSpawn() const { return true; }
-        virtual void spawn();
+        ObstaclePoint * getPin() const { return __pin; }
+        void pinTo(ObstaclePoint * obstacle);
 
         virtual string typeName() const { return DISLOCATIONPOINT_NAME; }
         static string staticTypeName() { return DISLOCATIONPOINT_NAME; }

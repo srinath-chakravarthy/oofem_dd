@@ -50,11 +50,11 @@ namespace dd {
             else {
                 if(projections[i] - projections[i - 1] < 6 * b * getBurgersMagnitude()) {
                     i--;
-                    dislocs.erase(it);
+                    // dislocs.erase(it);
                     delete (*it);
                     it = nextIt;
                     it--;
-                    dislocs.erase(nextIt);
+                    // dislocs.erase(nextIt);
                     delete (*nextIt);
                     continue;
                 }
