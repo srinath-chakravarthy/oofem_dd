@@ -89,12 +89,34 @@ namespace dd {
     /**
      * Add the cached force results.
      */
-    void Point::sumCaches(Vector<2> & force, Vector<2> & forceGradient, Vector<3> & stress) {
+    void Point::sumCaches(Vector<2> & force, Vector<2> & forceGradient, Vector<3> & stress) const {
         for(unsigned i = 0; i < caches.size(); i++) {
             force += caches[i].getForce();
             forceGradient += caches[i].getForceGradient();
             stress += caches[i].getStress();
         }
+    }
+    
+    Vector<2> Point::cachedForce() const {
+        Vector<2> force;
+        for(unsigned i = 0; i < caches.size(); i++) {
+            force += caches[i].getForce();
+        }
+        return force;
+    }
+    Vector<2> Point::cachedGradient() const {
+        Vector<2> gradient;
+        for(unsigned i = 0; i < caches.size(); i++) {
+            gradient += caches[i].getForceGradient();
+        }
+        return gradient;
+    }
+    Vector<3> Point::cachedStress() const {
+        Vector<3> stress;
+        for(unsigned i = 0; i < caches.size(); i++) {
+            stress += caches[i].getStress();
+        }
+        return stress;
     }
     
     void Point::updateCaches() {
@@ -109,6 +131,9 @@ namespace dd {
         }
         slipPlanePosition = projectedLocation.slipPlanePosition;
         history.push_front(new PointLog(projectedLocation));
+    }
+    void Point::updateLocation(const double & slipPlanePosition) {
+        updateLocation(PointLog(getSlipPlane(), slipPlanePosition));
     }
 }
 

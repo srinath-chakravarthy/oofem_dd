@@ -200,7 +200,15 @@ namespace dd {
         /**
          * Add the cached force results.
          */
-        void sumCaches(Vector<2> & force, Vector<2> & forceGradient, Vector<3> & stress);
+        void sumCaches(Vector<2> & force, Vector<2> & forceGradient, Vector<3> & stress) const;
+    
+        /**
+         * Individual getters
+         */
+        Vector<2> cachedForce() const;
+        Vector<2> cachedGradient() const;
+        Vector<3> cachedStress() const;
+         
     
         /**
          * Update the force caches.
@@ -211,6 +219,7 @@ namespace dd {
          * Update the location
          */
         virtual void updateLocation(PointLog projectedLocation);
+        virtual void updateLocation(const double & slipPlanePosition);
 
         virtual string typeName() const { return POINT_NAME; }
         static string staticTypeName() { return POINT_NAME; }

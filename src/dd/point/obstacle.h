@@ -6,9 +6,17 @@ namespace dd {
     class Point;
     class Domain;
     class SlipPlane;
+    class DislocationPoint;
 
     class ObstaclePoint : public Point {
 #define OBSTACLEPOINT_NAME "OBSTACLEPOINT"
+    // INVARIANT: If exists, __negativePinned has positive BurgersSign and is at the negative side of the Obstacle
+    // INVARIANT: If exists, __positivePinned has negative BurgersSign and is at the positive side of the Obstacle
+    private:
+        DislocationPoint * __negativePinned = nullptr;
+        DislocationPoint * __positivePinned = nullptr;
+        
+        bool checkRelease(const DislocationPoint * point) const;
     public:
         ObstaclePoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition) :
             Point(slipPlanePosition) {
@@ -19,10 +27,12 @@ namespace dd {
             Point(slipPlanePosition) {
             setRegistrations(domain, sPlane, antecedentIt);
         }
-
-        double getStrength() const { return 0; }
-
-        virtual bool canSpawn() const { return false; }
+        
+        virtual double strength() const { return 0; }
+        
+        virtual DislocationPoint * negativePinned() const { return __negativePinned; }
+        virtual DislocationPoint * positivePinned() const { return __positivePinned; }
+        virtual void release();
 
         virtual string typeName() const { return OBSTACLEPOINT_NAME; }
         static string staticTypeName() { return OBSTACLEPOINT_NAME; }

@@ -143,6 +143,18 @@ namespace dd {
         Vector & operator*=(const double & factor) {
             return *this = (*this * factor);
         }
+        
+        /**
+         * Division
+         */
+        Vector & operator/=(const double & factor) {
+            for(unsigned i = 0; i < size; i++) {
+                data[i] /= factor;
+            }
+        }
+        Vector operator/(const double & factor) { 
+            return Vector(*this) /= factor;
+        }
 
         virtual string typeName() const { return VECTOR_NAME; }
         static string staticTypeName() { return VECTOR_NAME; }
