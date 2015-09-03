@@ -135,15 +135,13 @@ namespace dd {
         /**
          * Scaling
          */
-        Vector operator*(const double & factor) const {
-            Vector result(*this);
-            result.scale(factor);
-            return result;
-        }
         Vector & operator*=(const double & factor) {
-            return *this = (*this * factor);
+            scale(factor);
+            return *this;
         }
-        
+        Vector operator*(const double & factor) const {
+            return Vector(*this) *= factor;
+        }
         /**
          * Division
          */

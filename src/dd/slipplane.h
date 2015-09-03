@@ -14,18 +14,19 @@ namespace dd {
     private:
         Domain * domain;
         Registration<SlipPlane, SlipSystem> slipSystemRegistration;
-        Vector2d origin;
+        double __normalDistance;
 
     public:
-        SlipPlane(Domain * domain, SlipSystem * slipSystem, Vector2d origin);
+        SlipPlane(Domain * domain, SlipSystem * slipSystem, double normalDistance);
 
         double getAngle() const;
         double getSin() const;
         double getCos() const;
         double getBurgersMagnitude() const;
-        Vector2d getBurgersVector() const;
+        double normalDistance() const;
+        Vector<2> getBurgersVector() const;
         SlipSystem * getSlipSystem() const;
-        Vector2d getOrigin() const;
+        Vector<2> getOrigin() const;
         
         void moveDislocations(double dt, double b);
 	

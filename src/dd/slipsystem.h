@@ -36,9 +36,10 @@ namespace dd {
         double getCos() const { return cos; }
         double getBurgersMagnitude() const { return bMag; }
         std::list<SlipPlane *> & getSlipPlanes() { return sPlanes; }
-        Vector2d getDirection() const { return directionVector; }
-        virtual Vector2d getPointPosition(const double & slipPlaneLocation,
-                                          const Vector2d & slipPlaneOrigin) const;
+        Vector<2> getDirection() const { return directionVector; }
+        Vector<2> normalDirection() const { return {directionVector[0], -directionVector[1]}; }
+        virtual Vector<2> getPointPosition(const double & slipPlaneLocation,
+                                           const Vector2d & slipPlaneOrigin) const;
         
         virtual string typeName() const { return SLIPSYSTEM_NAME; }
         static string staticTypeName() { return SLIPSYSTEM_NAME; }

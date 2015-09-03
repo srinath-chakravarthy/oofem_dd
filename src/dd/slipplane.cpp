@@ -8,20 +8,21 @@
 
 namespace dd {
 
-    SlipPlane::SlipPlane(Domain * domain, SlipSystem * slipSystem, Vector2d origin) :
+    SlipPlane::SlipPlane(Domain * domain, SlipSystem * slipSystem, double normalDistance) :
         domain(domain),
         slipSystemRegistration(this, slipSystem),
-        origin(origin) { }
+        __normalDistance(normalDistance) { }
 
     SlipSystem * SlipPlane::getSlipSystem() const { return slipSystemRegistration.getTarget(); }
     double SlipPlane::getAngle() const { return getSlipSystem()->getAngle(); }
     double SlipPlane::getCos() const { return getSlipSystem()->getCos(); }
     double SlipPlane::getSin() const { return getSlipSystem()->getSin(); }
     double SlipPlane::getBurgersMagnitude() const { return getSlipSystem()->getBurgersMagnitude(); }
+    double SlipPlane::normalDistance() const { return __normalDistance; }
     Vector2d SlipPlane::getBurgersVector() const { return getSlipSystem()->getDirection() * getBurgersMagnitude(); }
-    Vector2d SlipPlane::getOrigin() const { return origin; }
+    Vector2d SlipPlane::getOrigin() const { return getSlipSystem()->normalDirection() * __normalDistance; }
     Vector2d SlipPlane::getPointPosition(const double & slipPlaneLocation) const {
-        return getSlipSystem()->getPointPosition(slipPlaneLocation, origin);
+        return getSlipSystem()->getPointPosition(slipPlaneLocation, getOrigin());
     }
     
     void SlipPlane::moveDislocations(double dt, double b) {
