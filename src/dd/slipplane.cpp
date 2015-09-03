@@ -26,9 +26,17 @@ namespace dd {
     
     void SlipPlane::moveDislocations(double dt, double b) {
         std::list<Point *> & dislocs = HashedRegistrable<Point>::getContainer<DislocationPoint>();
+        std::list<Point *> & obs = HashedRegistrable<Point>::getContainer<ObstaclePoint>();
         std::vector<double> projections;
         projections.reserve(dislocs.size());
+        std::list<Point *>::iterator it;
+       
+        // Release pins
+        for(auto ob : obs) {
+            static_cast<ObstaclePoint *>(ob)->release();
+        }
         
+        // Calculate new positions
         for(auto disloc : dislocs) {
             Vector<2> force, forceGradient;
             Vector<3> stress;
@@ -37,7 +45,59 @@ namespace dd {
             projections.push_back(disloc->getSlipPlanePosition() + deltaPos);
         }
         
-        auto it = --dislocs.end();
+        // Negative pinning
+        it = dislocs.begin();
+        long long index = 0;
+        for(auto nextOb = obs.begin(); it != dislocs.end() && nextOb != obs.end(); nextOb++) {
+            ObstaclePoint * currentObstacle = static_cast<ObstaclePoint *>(*nextOb);
+            if(currentObstacle->negativePinned()) { continue; }
+            
+            bool hasDisToLeft = false;
+            while(it != dislocs.end() && (*it)->getSlipPlanePosition() < currentObstacle->getSlipPlanePosition()) {
+                hasDisToLeft = true;
+                it++;
+                index++;
+            }
+            
+            if(hasDisToLeft) {
+                it--;
+                index--;
+                if(projections[index] > currentObstacle->getSlipPlanePosition() - 2 * currentObstacle->getBurgersMagnitude()) {
+                    currentObstacle->pin(static_cast<DislocationPoint *>(*it));
+                }
+                it++;
+                index++;
+            }
+        }
+        
+        // Positive pinning
+        auto revIt = dislocs.rbegin();
+        index = projections.size() - 1;
+        for(auto prevOb = obs.rbegin(); revIt != dislocs.rend() && prevOb != obs.rend(); prevOb++) {
+            ObstaclePoint * currentObstacle = static_cast<ObstaclePoint *>(*prevOb);
+            if(currentObstacle->positivePinned()) { continue; }
+            
+            bool hasDisToRight = false;
+            while(revIt != dislocs.rend() && (*revIt)->getSlipPlanePosition() < currentObstacle->getSlipPlanePosition()) {
+                hasDisToRight = true;
+                revIt++;
+                index--;
+            }
+            
+            if(hasDisToRight) {
+                revIt--;
+                index++;
+                if(projections[index] < currentObstacle->getSlipPlanePosition() + 2 * currentObstacle->getBurgersMagnitude()) {
+                    currentObstacle->pin(static_cast<DislocationPoint *>(*revIt));
+                }
+                revIt++;
+                index--;
+            }
+            prevOb++;
+        }
+        
+        // Sort
+        it = --dislocs.end();
         for(int i = dislocs.size() - 1; i >= 1; i--) {
             auto nextIt = it;
             nextIt--;
