@@ -10,20 +10,16 @@ namespace dd {
     class SlipPlane;
     class ObstaclePoint;
 
-    class DislocationPoint : public Point, public BetweenPoints<Point> {
+    class DislocationPoint : public Point {
 #define DISLOCATIONPOINT_NAME "DislocationPoint"
     private:
         int burgersSign;
         void setCaches();
     public:
 
-        DislocationPoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, int burgersSign,
-                         list<Point *>::iterator nextObstacle,
-                         list<Point *>::reverse_iterator prevObstacle);
+        DislocationPoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, int burgersSign);
         DislocationPoint(Domain * domain, SlipPlane * sPlane,
-                         list<Point *>::iterator antecedentIt, double slipPlanePosition, int burgersSign,
-                         list<Point *>::iterator nextObstacle,
-                         list<Point *>::reverse_iterator prevObstacle);
+                         list<Point *>::iterator antecedentIt, double slipPlanePosition, int burgersSign);
                          
         virtual int getBurgersSign() const { return burgersSign; }
 

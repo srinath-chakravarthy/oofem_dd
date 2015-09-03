@@ -17,21 +17,15 @@ namespace dd {
         caches.push_back(ForceCache(new FromFem(this)));
     }
 
-    DislocationPoint::DislocationPoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, int burgersSign,
-                     typename list<Point *>::iterator nextObstacle,
-                     typename list<Point *>::reverse_iterator prevObstacle) :
+    DislocationPoint::DislocationPoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, int burgersSign) :
             Point(slipPlanePosition),
-            BetweenPoints<Point>(nextObstacle, prevObstacle),
             burgersSign(burgersSign) {
         setRegistrations(domain, sPlane);
         setCaches();
     }
     DislocationPoint::DislocationPoint(Domain * domain, SlipPlane * sPlane,
-                         typename list<Point *>::iterator antecedentIt, double slipPlanePosition, int burgersSign,
-                         typename list<Point *>::iterator nextObstacle,
-                         typename list<Point *>::reverse_iterator prevObstacle) :
+                         typename list<Point *>::iterator antecedentIt, double slipPlanePosition, int burgersSign) :
             Point(slipPlanePosition),
-            BetweenPoints<Point>(nextObstacle, prevObstacle),
             burgersSign(burgersSign) {
         setRegistrations(domain, sPlane, antecedentIt);
         setCaches();

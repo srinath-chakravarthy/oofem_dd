@@ -8,28 +8,22 @@ namespace dd {
     class Domain;
     class SlipPlane;
 
-    class SourcePoint : public Point, public BetweenPoints<Point> {
+    class SourcePoint : public Point {
 #define SOURCEPOINT_NAME "SourcePoint"
     private:
         double strength;
         double length;
     public:
 
-        SourcePoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, double strength, double length,
-                    list<Point *>::iterator next,
-                    list<Point *>::reverse_iterator prev) :
+        SourcePoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, double strength, double length) :
             Point(slipPlanePosition),
-            BetweenPoints<Point>(next, prev),
             strength(strength),
             length(length) {
             setRegistrations(domain, sPlane);
         }
         SourcePoint(Domain * domain, SlipPlane * sPlane,
-                    list<Point *>::iterator antecedentIt, double slipPlanePosition, double strength, double length,
-                    list<Point *>::iterator next,
-                    list<Point *>::reverse_iterator prev) :
+                    list<Point *>::iterator antecedentIt, double slipPlanePosition, double strength, double length) :
             Point(slipPlanePosition),
-            BetweenPoints<Point>(next, prev),
             strength(strength),
             length(length) {
             setRegistrations(domain, sPlane, antecedentIt);
