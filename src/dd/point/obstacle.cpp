@@ -22,10 +22,12 @@ namespace dd {
         }
         else if(releaseNegative) {
             __negativePinned->updateLocation(__negativePinned->getSlipPlanePosition() + 4 * __negativePinned->getBurgersMagnitude());
+            __negativePinned->unpin();
             __negativePinned = nullptr;
         }
         else if(releasePositive) {
             __positivePinned->updateLocation(__positivePinned->getSlipPlanePosition() - 4 * __positivePinned->getBurgersMagnitude());
+            __positivePinned->unpin();
             __positivePinned = nullptr;        
         }
     }

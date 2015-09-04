@@ -31,8 +31,8 @@ namespace dd {
     protected:
         std::list<PointLog *> history;
         std::vector<ForceCache> caches;
-        Registration<Point, Domain> * domainRegistration = nullptr; /*!< Pointer to a registered Domain */
-        Registration<Point, SlipPlane> * sPlaneRegistration = nullptr; /*!< pointer to a registerd SlipPlane */
+        Registration<Point, list<Point *>, Domain> * domainRegistration = nullptr; /*!< Pointer to a registered Domain */
+        Registration<Point, list<Point *>, SlipPlane> * sPlaneRegistration = nullptr; /*!< pointer to a registerd SlipPlane */
         double slipPlanePosition = 0; /* !< Local Postion of point on SlipPlane */
 
         /**
@@ -73,13 +73,13 @@ namespace dd {
         void setRegistrations(Domain * domain, SlipPlane * sPlane, const typename list<Point *>::iterator & antecedentIt) {
             destructRegistrations();
             if(domain != nullptr) {
-                this->domainRegistration = new Registration<Point, Domain>(this,
-                                                                           domain);
+                this->domainRegistration = new Registration<Point, list< Point *>, Domain>(this,
+                                                                           				   domain);
             }
             if(sPlane != nullptr) {
-                this->sPlaneRegistration = new Registration<Point, SlipPlane>(this,
-                                                                              sPlane,
-                                                                              antecedentIt);
+                this->sPlaneRegistration = new Registration<Point, list< Point *>, SlipPlane>(this,
+                                                                              				  sPlane,
+                                                                              				  antecedentIt);
             }
         }
 
@@ -89,11 +89,11 @@ namespace dd {
         void setRegistrations(Domain * domain, SlipPlane * sPlane) {
             destructRegistrations();
             if(domain != nullptr) {
-                this->domainRegistration = new Registration<Point, Domain>(this,
+                this->domainRegistration = new Registration<Point, list< Point *>, Domain>(this,
                                                                            domain);
             }
             if(sPlane != nullptr) {
-                this->sPlaneRegistration = new Registration<Point, SlipPlane>(this,
+                this->sPlaneRegistration = new Registration<Point, list< Point *>, SlipPlane>(this,
                                                                               sPlane);
             }
         }

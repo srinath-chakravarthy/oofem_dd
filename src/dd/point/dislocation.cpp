@@ -41,4 +41,15 @@ namespace dd {
         __pin = obstacle;
         obstacle->pin(this);
     }
+    
+    /**
+     * Remove the pinned condition
+     *
+	 */
+    void DislocationPoint::unpin() {
+    	if(!__pin) {
+    		DdError::exception("Not pinned.");
+    	}
+    	__pin = nullptr;
+    }
 }

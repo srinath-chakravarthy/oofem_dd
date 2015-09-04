@@ -5,12 +5,13 @@
 #include "vector.h"
 #include <cmath>
 #include "hashedregistrable.h"
+#include <set>
 
 namespace dd {
 
     class SlipPlane;
 
-    class SlipSystem : public HashedRegistrable<SlipPlane> {
+    class SlipSystem : public HashedRegistrable<SlipPlane, std::list<SlipPlane *>> {
 #define SLIPSYSTEM_NAME "SlipSystem"
     private:
         std::list<SlipPlane *> sPlanes;

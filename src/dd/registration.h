@@ -9,12 +9,12 @@ namespace dd {
 	 * Registration of object type T to the container of type Registrable
 	 *
 	 */
-    template <typename T, typename Registrable = HashedRegistrable<T>>
+    template <typename T, typename RegistrableContainer = list<T *>, typename Registrable = HashedRegistrable<T, RegistrableContainer>>
     class Registration {
 #define REGISTRATION_NAME "Registration"
     private:
         Registrable * target;
-        typename list<T *>::iterator registreeIterator;
+        typename RegistrableContainer::iterator registreeIterator;
     public:
     
     	/**
@@ -29,7 +29,7 @@ namespace dd {
          *
          * @returns registration iterator
          */
-        decltype(registreeIterator) getIterator() const { return registreeIterator; }
+        typename RegistrableContainer::iterator getIterator() const { return registreeIterator; }
         
         /**
  		 * Default constructor
@@ -42,7 +42,7 @@ namespace dd {
             registreeIterator = target->insert(toRegister);
         }
         
-        Registration(T * toRegister, Registrable * target, decltype(registreeIterator) antecedent) {
+        Registration(T * toRegister, Registrable * target, typename RegistrableContainer::iterator antecedent) {
             this->target = target;
             registreeIterator = target->insert(toRegister, antecedent);
         }

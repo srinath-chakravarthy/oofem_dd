@@ -4,6 +4,7 @@
 #include "registration.h"
 #include "domain.h"
 #include "vector.h"
+#include <set>
 
 namespace dd {
 
@@ -13,7 +14,7 @@ namespace dd {
 #define SLIPPLANE_NAME "SlipPlane"
     private:
         Domain * domain;
-        Registration<SlipPlane, SlipSystem> slipSystemRegistration;
+        Registration<SlipPlane, std::list<SlipPlane *>, SlipSystem> slipSystemRegistration;
         double __normalDistance;
 
     public:

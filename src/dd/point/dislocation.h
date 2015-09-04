@@ -26,6 +26,7 @@ namespace dd {
 
         ObstaclePoint * getPin() const { return __pin; }
         void pinTo(ObstaclePoint * obstacle);
+        void unpin();
 
         virtual string typeName() const { return DISLOCATIONPOINT_NAME; }
         static string staticTypeName() { return DISLOCATIONPOINT_NAME; }
