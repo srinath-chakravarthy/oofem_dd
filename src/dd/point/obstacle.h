@@ -32,6 +32,13 @@ namespace dd {
         
         virtual DislocationPoint * negativePinned() const { return __negativePinned; }
         virtual DislocationPoint * positivePinned() const { return __positivePinned; }
+        
+        /**
+         * Pin the given dislocation coming from the given side on the slip plane
+         *
+         * @param point		The dislocation to be pinned
+         * @param fromSide	1 or -1, denoting the slipPlaneDirection the point is coming from
+         */
         virtual void pin(DislocationPoint * point);
         virtual void release();
 

@@ -14,8 +14,12 @@ namespace dd {
 #define DISLOCATIONPOINT_NAME "DislocationPoint"
     private:
         int burgersSign;
-        ObstaclePoint * __pin = nullptr;
+        ObstaclePoint * __positivePin = nullptr;
+        ObstaclePoint * __negativePin = nullptr;
         void setCaches();
+        
+        void __pinTo(ObstaclePoint * obstacle, ObstaclePoint * & pinPointer);
+        void __unpin(ObstaclePoint * & pinPointer);
     public:
 
         DislocationPoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, int burgersSign);
@@ -24,9 +28,14 @@ namespace dd {
                          
         virtual int getBurgersSign() const { return burgersSign; }
 
-        ObstaclePoint * getPin() const { return __pin; }
-        void pinTo(ObstaclePoint * obstacle);
-        void unpin();
+		// TODO: Clear duplication
+
+        ObstaclePoint * positivePin() const { return __positivePin; }
+        ObstaclePoint * negativePin() const { return __negativePin; }
+        void positivePinTo(ObstaclePoint * obstacle) { __pinTo(obstacle, __positivePin); }
+        void negativePinTo(ObstaclePoint * obstacle) { __pinTo(obstacle, __negativePin); }
+        void positiveUnpin() { __unpin(__positivePin); }
+		void negativeUnpin() { __unpin(__negativePin); }
 
         virtual string typeName() const { return DISLOCATIONPOINT_NAME; }
         static string staticTypeName() { return DISLOCATIONPOINT_NAME; }

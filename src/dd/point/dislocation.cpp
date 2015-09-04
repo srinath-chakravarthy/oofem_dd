@@ -33,23 +33,14 @@ namespace dd {
         setCaches();
     }
 
-    void DislocationPoint::pinTo(ObstaclePoint * obstacle) {
-        if(__pin) {
-            DdError::exception("Already pinned.");
-        }
-        if(__pin == obstacle) { return; }
-        __pin = obstacle;
-        obstacle->pin(this);
-    }
+	void DislocationPoint::__pinTo(ObstaclePoint * obstacle, ObstaclePoint * & pinPointer) {
+		if(pinPointer == obstacle) { return; }
+		if(pinPointer) { DdError::exception("Already pinned."); }
+		pinPointer = obstacle;
+	}
     
-    /**
-     * Remove the pinned condition
-     *
-	 */
-    void DislocationPoint::unpin() {
-    	if(!__pin) {
-    		DdError::exception("Not pinned.");
-    	}
-    	__pin = nullptr;
-    }
+    void DislocationPoint::__unpin(ObstaclePoint * & pinPointer) {
+    	if(!pinPointer) { DdError::exception("Not pinned."); }
+    	pinPointer = nullptr;
+	}
 }

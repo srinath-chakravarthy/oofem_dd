@@ -22,28 +22,28 @@ namespace dd {
         }
         else if(releaseNegative) {
             __negativePinned->updateLocation(__negativePinned->getSlipPlanePosition() + 4 * __negativePinned->getBurgersMagnitude());
-            __negativePinned->unpin();
+            __negativePinned->positiveUnpin();
             __negativePinned = nullptr;
         }
         else if(releasePositive) {
             __positivePinned->updateLocation(__positivePinned->getSlipPlanePosition() - 4 * __positivePinned->getBurgersMagnitude());
-            __positivePinned->unpin();
+            __positivePinned->negativeUnpin();
             __positivePinned = nullptr;        
         }
     }
     
     void ObstaclePoint::pin(DislocationPoint * point) {
-        if(point->getBurgersSign() == 1) {
+        if(point->getSlipPlanePosition() < getSlipPlanePosition()) {
             if(__negativePinned == point) { return; }
             if(__negativePinned) { DdError::exception("Obstacle has a dislocation pinned at the negative side."); }
             __negativePinned = point;
-            point->pinTo(this);
+            point->positivePinTo(this);
         }
         else {
             if(__positivePinned == point) { return; }
             if(__positivePinned) { DdError::exception("Obstacle has a dislocation pinned at the positive side."); }
             __positivePinned = point;
-            point->pinTo(this);
+            point->negativePinTo(this);
         }
     }
 

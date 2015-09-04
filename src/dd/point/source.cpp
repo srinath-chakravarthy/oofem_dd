@@ -33,17 +33,16 @@ namespace dd {
     		
     		std::list<Point *> & dislocs = getSlipPlane()->getContainer("DislocationPoint");
     		
-    		auto itN = dislocs.begin(), itP = dislocs.begin();
+    		auto antecedentIt = dislocs.begin();
     		
-    		while(itN != dislocs.end() && (*itN)->getSlipPlanePosition() < posNegative) {
-    			itN++;
-    		}
-    		while(itP != dislocs.end() && (*itP)->getSlipPlanePosition() < posPositive) {
-    			itP++;
+    		while(antecedentIt != dislocs.end() && (*antecedentIt)->getSlipPlanePosition() < posNegative) {
+    			antecedentIt++;
     		}
     		
-    		new DislocationPoint(getDomain(), getSlipPlane(), itN, posNegative, signNeg);
-    		new DislocationPoint(getDomain(), getSlipPlane(), itP, posPositive, signPos);
+    		if(antecedentIt == dislocs.end() || (*antecedentIt)->getSlipPlanePosition() > posPositive) {
+    			new DislocationPoint(getDomain(), getSlipPlane(), antecedentIt, posNegative, signNeg);
+    			new DislocationPoint(getDomain(), getSlipPlane(), antecedentIt, posPositive, signPos);
+    		}
     		
     	}
     }

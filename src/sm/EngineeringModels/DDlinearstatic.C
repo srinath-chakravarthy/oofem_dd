@@ -274,12 +274,16 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         std::cout << force[0] << " " << force[1] << "\n";
         */
         
-        
+        for(long long dtNo = 1; dtNo < 1000; dtNo++) {
         dd_domain.updateForceCaches();        
         for(auto point : dd_domain.getContainer<dd::DislocationPoint>()) {
         	point->sumCaches(force, forceGradient, stress);
         	std::cout << "Cached Force: " << force[0] << " " << force[1];
         }
+        s1.spawn(1, 3);
+        sp0.moveDislocations(1, 1);
+        
+        /*
         for(int bcNo = 1; bcNo <= giveDomain(i)->giveNumberOfBoundaryConditions(); bcNo++) {
         	ManualBoundaryCondition * bc = dynamic_cast<ManualBoundaryCondition *>(giveDomain(i)->giveBc(bcNo));
         	if(bc == nullptr || bc->giveType() != DirichletBT) { continue; }
@@ -288,6 +292,7 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         	
         	Domain * d = bc->giveDomain();
         	Set * set = d->giveSet(bc->giveSetNumber());
+        	
         	
         	for(int nodeNo : set->giveNodeList()) {
                 Node * node = static_cast<Node *>(d->giveDofManager(nodeNo));
@@ -308,21 +313,17 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
                     bc->addManualValue(dof, toAdd);
                 }
             }
+            
         	
-        	/*
-        	for(int dofManagerNo = 1; dofManagerNo <= bc->giveNumberOfInternalDofManagers(); dofManagerNo++) {
-        		Node * node = dynamic_cast<Node *>(bc->giveInternalDofManager(dofManagerNo));
-        		if(node == nullptr) { continue; }
-        		interface->giveNodalBcContribution(node, bcContribution);
-        	} 
-        	*/
         	
             std::cout << "BC Contribution: " << bcContribution[0] << " " << bcContribution[1] << "\n";
-            
-            //bc->addManualValues(bcContribution);            
+                      
         }
         
+        */
+        
 		delete interface;
+		} // end dtNo loop
     }
 
 

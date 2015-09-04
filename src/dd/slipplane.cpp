@@ -46,6 +46,10 @@ namespace dd {
             projections.push_back(disloc->getSlipPlanePosition() + deltaPos);
         }
         
+        //
+        // TODO: Clean the pinning; extract it
+        //
+        
         // Negative pinning
         it = dislocs.begin();
         long long index = 0;
@@ -99,18 +103,30 @@ namespace dd {
         
         // Sort
         it = --dislocs.end();
+        bool pushRight = true;
         for(int i = dislocs.size() - 1; i >= 1; i--) {
             auto nextIt = it;
             nextIt--;
             
-            if(static_cast<DislocationPoint *>(*it)->getPin()) { continue; }
+            DislocationPoint * dis = static_cast<DislocationPoint *>(*it);
+            DislocationPoint * nextDis = static_cast<DislocationPoint *>(*nextIt);
             
-            if((*it)->getBurgersSign() == (*nextIt)->getBurgersSign()) {
-                projections[i - 1] = std::min(projections[i - 1],
-                                           projections[i] - 2 * getBurgersMagnitude());
-                
+            if(dis->negativePin()) { continue; }
+            if(dis->positivePin()) { pushRight = false; }
+            
+            
+            if(dis->getBurgersSign() == nextDis->getBurgersSign()) {
+            	if(pushRight) {
+                	projections[i] = std::max(projections[i],
+                							  projections[i - 1] + 2 * getBurgersMagnitude());
+                }
+                else {
+                	projections[i - 1] = std::min(projections[i - 1],
+                    	                          projections[i] - 2 * getBurgersMagnitude());
+                }
             }
             else {
+            	pushRight = true;
                 if(projections[i] - projections[i - 1] < 6 * b * getBurgersMagnitude()) {
                     i--;
                     // dislocs.erase(it);
