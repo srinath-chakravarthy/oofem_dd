@@ -3,21 +3,24 @@
 
 #include "ddobject.h"
 #include <unordered_map>
-#include <iostream>
 
 namespace dd {
 
-    template <typename T>
+	/**
+     * A typename-hashed registrable for objects of type T. Container must be a container of
+     * objects of type T *.
+     */
+    template <typename T, typename Container = list<T *>>
     class HashedRegistrable : public DdObject {
 #define HASHEDREGISTRABLE_NAME "HashedRegistrable"
     public:
-        std::unordered_map<string, list<T *>> containers;
+        std::unordered_map<string, Container> containers;
 
         /**
          * Register element before the given iterator.
          */
-        virtual typename list<T *>::iterator insert(T * toInsert,
-                                                    typename list<T *>::iterator antecedent) {
+        virtual typename Container::iterator insert(T * toInsert,
+                                                    typename Container::iterator antecedent) {
             containers[toInsert->typeName()].insert(antecedent, toInsert);
             return --antecedent;
         }
@@ -25,14 +28,14 @@ namespace dd {
         /**
          * Register the element at the end.
          */
-        virtual typename list<T *>::iterator insert(T * toInsert) {
+        virtual typename Container::iterator insert(T * toInsert) {
             return insert(toInsert, containers[toInsert->typeName()].end());
         }
 
         /**
          * Erase the element of the given iterator
          */
-        virtual void erase(typename list<T *>::iterator toErase) {
+        virtual void erase(typename Container::iterator toErase) {
             containers[(*toErase)->typeName()].erase(toErase);
         }
 
@@ -40,14 +43,14 @@ namespace dd {
          * Get the container of the given type
          */
         template <typename U>
-        list<T *> & getContainer() {
+        Container & getContainer() {
             return containers[U::staticTypeName()];
         }
 
         /**
          * Get the container of the given key
          */
-        list <T *> & getContainer(const string & key) {
+        Container & getContainer(const string & key) {
             return containers[key];
         }
 
