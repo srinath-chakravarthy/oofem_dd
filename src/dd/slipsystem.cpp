@@ -5,8 +5,9 @@
 
 namespace dd {
 
-    Vector2d SlipSystem::getPointPosition(const double & slipPlaneLocation,
-                                          const Vector2d & slipPlaneOrigin) const {
+    Vector<2> SlipSystem::getPointPosition(const double & slipPlaneLocation,
+                                           const Vector2d & slipPlaneOrigin) const {
         return directionVector * slipPlaneLocation + slipPlaneOrigin;
     }
+    
 }

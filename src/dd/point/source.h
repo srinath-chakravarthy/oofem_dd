@@ -11,22 +11,25 @@ namespace dd {
 #define SOURCEPOINT_NAME "SourcePoint"
     private:
         double __strength;
+        void setCaches();
     public:
 
         SourcePoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, double strength = 0) :
             Point(slipPlanePosition),
             __strength(strength) {
             setRegistrations(domain, sPlane);
+            setCaches();
         }
         SourcePoint(Domain * domain, SlipPlane * sPlane,
                     list<Point *>::iterator antecedentIt, double slipPlanePosition, double strength = 0) :
             Point(slipPlanePosition),
             __strength(strength) {
             setRegistrations(domain, sPlane, antecedentIt);
+            setCaches();
         }
         
         double strength() const { return __strength; }
-
+        
         
 
         virtual string typeName() const { return SOURCEPOINT_NAME; }

@@ -14,8 +14,8 @@ namespace dd {
     void DislocationPoint::setCaches() {
         caches.clear();
         caches.reserve(2);
-        caches.push_back(ForceCache(new FromDislocations(this)));
-        caches.push_back(ForceCache(new FromFem(this)));
+        caches.push_back(ForceCache(FromDislocations::getInstance()));
+        caches.push_back(ForceCache(FromFem::getInstance()));
     }
 
     DislocationPoint::DislocationPoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, int burgersSign) :

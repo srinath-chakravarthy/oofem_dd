@@ -10,7 +10,7 @@ namespace dd {
         return getSlipPlane()->getBurgersMagnitude();
     }
 
-    int Point::getBurgersSign() const { return 0; }
+    int Point::getBurgersSign() const { return 1; }
 
     Vector<2> Point::getBurgersVector() const {
         return getSlipPlane()->getBurgersVector();
@@ -117,7 +117,7 @@ namespace dd {
     
     void Point::updateCaches() {
         for(unsigned i = 0; i < caches.size(); i++) {
-            caches[i].update();
+            caches[i].update(this);
         }
     }
     

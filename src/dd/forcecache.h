@@ -8,6 +8,7 @@
 namespace dd {
 
     class ForceFunctor;
+    class Point;
    
     class ForceCache : public DdObject {
 #define FORCECACHE_NAME "ForceCache"
@@ -25,7 +26,7 @@ namespace dd {
         Vector<2> getForceGradient() const;
         Vector<3> getStress() const;
         
-        void update();
+        void update(Point * point);
         
         virtual string typeName() const { return FORCECACHE_NAME; }
         static string staticTypeName() { return FORCECACHE_NAME; }
