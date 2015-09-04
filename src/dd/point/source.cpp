@@ -2,6 +2,7 @@
 #include "point/dislocation.h"
 #include "../forcefunctor/fromdislocations.h"
 #include "../forcefunctor/fromfem.h"
+#include "../forcefunctor/fromfemmock.h"
 #include "domain.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -11,7 +12,7 @@ namespace dd {
         caches.clear();
         caches.reserve(2);
         caches.push_back(ForceCache(FromDislocations::getInstance()));
-        caches.push_back(ForceCache(FromFem::getInstance()));
+        caches.push_back(ForceCache(FromFemMock::getInstance()));
     }
     
     void SourcePoint::spawn(const double & dt, const double & tnuc) {

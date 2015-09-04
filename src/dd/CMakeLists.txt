@@ -13,6 +13,9 @@
     forcecache.cpp
     feminterface/feminterface.cpp
     feminterface/oofeminterface.cpp
+    forcefunctor/fromfem.cpp
+    forcefunctor/fromdislocations.cpp
+    forcefunctor/fromfemmock.cpp
     )
   
 add_library(dd

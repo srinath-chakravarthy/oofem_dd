@@ -6,6 +6,7 @@
 #include "slipplane.h"
 #include "../forcefunctor/fromdislocations.h"
 #include "../forcefunctor/fromfem.h"
+#include "../forcefunctor/fromfemmock.h"
 #include "domain.h"
 #include "point/obstacle.h"
 
@@ -15,7 +16,7 @@ namespace dd {
         caches.clear();
         caches.reserve(2);
         caches.push_back(ForceCache(FromDislocations::getInstance()));
-        caches.push_back(ForceCache(FromFem::getInstance()));
+        caches.push_back(ForceCache(FromFemMock::getInstance()));
     }
 
     DislocationPoint::DislocationPoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, int burgersSign) :
