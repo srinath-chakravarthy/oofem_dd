@@ -184,7 +184,7 @@ TimeStep *DDLinearStatic :: giveNextStep()
         currentStep.reset( new TimeStep(giveNumberOfTimeStepWhenIcApply(), this, 1, 0., 1., 0) );
     }
     previousStep = std :: move(currentStep);
-    currentStep.reset( new TimeStep(*previousStep, 1.) );
+    currentStep.reset(new TimeStep(*previousStep, 1.) );
 
     return currentStep.get();
 }
@@ -234,30 +234,27 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         dd::SlipSystem ss0 = dd::SlipSystem(M_PI/6.0, 0.25e-9);
         dd_domain.addSlipSystem(&ss0);
 
-        dd::SlipPlane sp0 = dd::SlipPlane(&dd_domain, &ss0, {0, 0});
+        dd::SlipPlane sp0 = dd::SlipPlane(&dd_domain, &ss0, 1);
 
-	
-        dd::DislocationPoint dis0 = dd::DislocationPoint(&dd_domain, &sp0, 0, 1,
-                                    sp0.getContainer<dd::ObstaclePoint>().end(),
-                                    sp0.getContainer<dd::ObstaclePoint>().rend());
-        dd::DislocationPoint dis1 = dd::DislocationPoint(&dd_domain, &sp0, 1, -1,
-                                    sp0.getContainer<dd::ObstaclePoint>().end(),
-                                    sp0.getContainer<dd::ObstaclePoint>().rend());
+		dd::ObstaclePoint o0 = dd::ObstaclePoint(&dd_domain, &sp0, -3, 2);
+		dd::ObstaclePoint o1 = dd::ObstaclePoint(&dd_domain, &sp0, 3, 2);
+		dd::SourcePoint s1 = dd::SourcePoint(&dd_domain, &sp0, 0, 1, 0.5);
+		dd::Vector<2> force, forceGradient;
+        dd::Vector<3> stress;
+
+		/*
+        dd::DislocationPoint dis0 = dd::DislocationPoint(&dd_domain, &sp0, 0, 1);
+        dd::DislocationPoint dis1 = dd::DislocationPoint(&dd_domain, &sp0, 1, -1);
 
         std::cout << "Dislocation point count: " << sp0.getContainer<dd::DislocationPoint>().size() << "\n";
-        dd::Vector<2> force, forceGradient;
-        dd::Vector<3> stress;
+        
 	
 	    oofem::FloatArray force_dd;
 
         dis0.addForceContribution<dd::DislocationPoint>(force, forceGradient, stress);
+		
 	
-	/** Procedure to calculate force on each dislocation 
-	 * Loop through all DislocationPoints, and SourcePoints
-	 * Evaluate interaction force between them and all DislocationPoints
-	 * Now use SpatialLocalizer to determine which element the Point belongs to
-	 *     See example below
-	 */
+	
 	// Convert dislocation position to global coordinates 
 	//FloatArray FeDislGlobalPos = dis0.getLocation();
 	/// Now find stress at this global location 
@@ -275,14 +272,14 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
 	/// The total force on any Point is equal to the interaction force + burgers_vec_mag*burg_direction*((stress[1]-stress[2])*cos2i) + stress[3]*sin2i/2.)
 	
         std::cout << force[0] << " " << force[1] << "\n";
+        */
         
-        dd_domain.updateForceCaches();
         
+        dd_domain.updateForceCaches();        
         for(auto point : dd_domain.getContainer<dd::DislocationPoint>()) {
         	point->sumCaches(force, forceGradient, stress);
         	std::cout << "Cached Force: " << force[0] << " " << force[1];
         }
-        
         for(int bcNo = 1; bcNo <= giveDomain(i)->giveNumberOfBoundaryConditions(); bcNo++) {
         	ManualBoundaryCondition * bc = dynamic_cast<ManualBoundaryCondition *>(giveDomain(i)->giveBc(bcNo));
         	if(bc == nullptr || bc->giveType() != DirichletBT) { continue; }
