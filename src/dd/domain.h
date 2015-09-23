@@ -63,5 +63,10 @@ namespace dd {
 
         virtual string typeName() const { return DOMAIN_NAME; }
         static string staticTypeName() { return DOMAIN_NAME; }
+        
+        /// Temporary hack for Linear Time dependent force and stress everywhere in the domain 
+        int dtNo = 0; 
+	int dtNomax = 1000;
+        
     };
 }

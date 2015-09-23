@@ -229,16 +229,22 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         /// Each domain for the DD case can have only one material... throw error otherwise
         //// Also the DD_domains should be intialized with these materials properties during input
         //// Here i am just using values from input file for algorithmic convenience
+        /*
         dd::OofemInterface * interface = new dd::OofemInterface(this);
-        dd::Domain dd_domain(70e9, 0.3, interface);
-        dd::SlipSystem ss0 = dd::SlipSystem(M_PI/6.0, 0.25e-9);
+        */
+        dd::Domain dd_domain(70e-3, 0.3, NULL);
+        dd::SlipSystem ss0 = dd::SlipSystem(M_PI/6.0, 0.25e-3);
         dd_domain.addSlipSystem(&ss0);
 
         dd::SlipPlane sp0 = dd::SlipPlane(&dd_domain, &ss0, 1);
 
-		dd::ObstaclePoint o0 = dd::ObstaclePoint(&dd_domain, &sp0, -3, 2);
-		dd::ObstaclePoint o1 = dd::ObstaclePoint(&dd_domain, &sp0, 3, 2);
-		dd::SourcePoint s1 = dd::SourcePoint(&dd_domain, &sp0, 0, 1, 0.5);
+		dd::ObstaclePoint o0 = dd::ObstaclePoint(&dd_domain, &sp0, -0.5, 20.0e3);
+		dd::ObstaclePoint o1 = dd::ObstaclePoint(&dd_domain, &sp0, 0.5, 20.0e3);
+		double e = dd_domain.getModulus();
+		double nu = dd_domain.getPassionsRatio();
+		double mu = e / (2. * ( 1. + nu));
+		double fact = mu * ss0.getBurgersMagnitude() / ( 2 * M_PI * (1. - nu));
+		dd::SourcePoint s1 = dd::SourcePoint(&dd_domain, &sp0, 0, 25e-3, fact / 25e-3);
 		dd::Vector<2> force, forceGradient;
         dd::Vector<3> stress;
 
@@ -274,13 +280,13 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         std::cout << force[0] << " " << force[1] << "\n";
         */
         
-        for(long long dtNo = 1; dtNo < 1000; dtNo++) {
+        for( dd_domain.dtNo = 1; dd_domain.dtNo < dd_domain.dtNomax; dd_domain.dtNo++) {
         dd_domain.updateForceCaches();        
         for(auto point : dd_domain.getContainer<dd::DislocationPoint>()) {
         	point->sumCaches(force, forceGradient, stress);
         	std::cout << "Cached Force: " << force[0] << " " << force[1];
         }
-        s1.spawn(1, 3);
+        s1.spawn(1, 5);
         sp0.moveDislocations(1, 1);
         
         /*
@@ -322,7 +328,7 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         
         */
         
-		delete interface;
+		//delete interface;
 		} // end dtNo loop
     }
 

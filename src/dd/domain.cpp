@@ -18,7 +18,9 @@ namespace dd {
     Domain::Domain(const double & propModulus, const double & propPassionsRatio, FemInterface * femInterface) :
         propModulus(propModulus), propPassionsRatio(propPassionsRatio),
         femInterface(femInterface) { 
-    	femInterface->setDomain(this);    
+	if (femInterface){
+	  femInterface->setDomain(this);    
+	}
     }
         
     void Domain::updateForceCaches()  {

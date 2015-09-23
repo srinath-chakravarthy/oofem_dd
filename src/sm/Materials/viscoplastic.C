@@ -608,10 +608,12 @@ ViscoPlastic :: giveIPValue(FloatArray &answer, GaussPoint *gp, InternalStateTyp
         answer.resize(1);
         answer.at(1) = status->giveCumulativePlasticStrain();
         return 1;
+    /*
     }else if ( type == IST_StressGradient ) {
         answer.resize(1);
         answer.at(1) = status->giveXita();
         return 1;
+    */
     }else {
         return StructuralMaterial :: giveIPValue(answer, gp, type, tStep);
     }

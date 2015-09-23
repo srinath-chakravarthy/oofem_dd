@@ -5,6 +5,7 @@
 #include "complex.h"
 #include "forcefunctor/fromfem.h"
 #include "dderror.h"
+#include <cmath>
 namespace dd {
     double Point::getBurgersMagnitude() const {
         return getSlipPlane()->getBurgersMagnitude();
@@ -18,12 +19,15 @@ namespace dd {
 
     void Point::addForceContribution(const Point * & p, Vector<2> & force,
                                      Vector<2> & v2, Vector<3> & stress) {
-        double thetaz = getDomain()->getModulus();
-        double factor = getDomain()->getPassionsRatio();
+	double e = getDomain()->getModulus();
+	double nu = getDomain()->getPassionsRatio();
+	double mu = e / (2. * (1. + nu));
+        double factor = mu / (4. * M_PI * (1. - nu));
 
         double cutOff = 2 * std::abs(this->getBurgersMagnitude());
         Complex b(this->getBurgersVector());
         Complex z(this->getLocation());
+	Complex thetaz(this->getSlipPlane()->getCos(), -this->getSlipPlane()->getSin());
 
         double sig11 = 0;
         double sig22 = 0;
@@ -32,11 +36,10 @@ namespace dd {
         double sig22z = 0;
         double sig12z = 0;
 
-
         Complex zSource(p->getLocation());
         Complex dz = z - zSource;
         double zd = dz.abs();
-
+	
 
         if(zd > cutOff) {
             Complex phi1 = -1. * Complex::i * factor * b / dz;
@@ -60,6 +63,29 @@ namespace dd {
             sig22z += Complex(.5 * (tmp1z - tmp2z)).real();
             sig12z += Complex(.5 * tmp2z).imag();
         }
+        else {
+	  Complex th;
+	  if (zd > 1.e-4) { 
+	    if (dz.real() == 0.){
+	       th = Complex(0., ::asin(this->getSlipPlane()->getSin()));
+	    }
+	    else {
+	      th = Complex(0., dz.log().imag());
+	    }
+	    Complex zstar = cutOff * th.exp();
+	    Complex phi1 = -1. * Complex::i * factor * b / zstar;
+	    Complex phi11 = 1. *Complex::i * factor * b / (zstar*zstar);
+	    Complex phi2 = 1. * Complex::i * factor * b.conjugate() / zstar;
+
+	    Complex tmp1 = 2. * Complex(phi1 * phi1.conjugate());
+            Complex tmp2 = -2. * Complex(zstar * phi11.conjugate() * phi2.conjugate());
+	    
+            sig11 += Complex(0.5 * (tmp1 + tmp2)).real();
+            sig22 += Complex(0.5 * (tmp1 - tmp2)).real();
+            sig12 += Complex(.5 * tmp2).imag();
+    
+	  }
+	}
 
         double cos2i = ::cos(2. * this->getSlipPlane()->getAngle());
         double sin2i = ::sin(2. * this->getSlipPlane()->getAngle());
@@ -96,6 +122,9 @@ namespace dd {
     Vector<2> Point::cachedForce() const {
         Vector<2> force;
         for(unsigned i = 0; i < caches.size(); i++) {
+	    if (caches[i] == nullptr){
+	      int j = i;
+	    }
             force += caches[i].getForce();
         }
         return force;

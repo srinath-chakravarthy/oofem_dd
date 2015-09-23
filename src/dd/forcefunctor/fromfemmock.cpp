@@ -1,5 +1,6 @@
 #include "fromfemmock.h"
 #include "point.h"
+#include "../domain.h"
 
 namespace dd {
 
@@ -13,9 +14,14 @@ namespace dd {
 	}
 	
 	void FromFemMock::calculate(Point * point, Vector<2> & force, Vector<2> & forceGradient, Vector<3> stress) {
-		force = {1, 1};
-		forceGradient = {0, 0};
-		stress = {0, 0};
+	      double slope = 500e-3/ point->getDomain()->dtNomax;
+	      double bmag = point->getBurgersMagnitude();
+	      int t = point->getDomain()->dtNo;
+	      double sig = double(t) * slope;
+	      double f = sig * bmag; 
+		force = {f, 0.};
+		forceGradient = {0., 0.};
+		stress = {0., 0., sig};
 	}
 
 }
