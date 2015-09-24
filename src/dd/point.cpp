@@ -4,6 +4,7 @@
 #include "domain.h"
 #include "complex.h"
 #include "forcefunctor/fromfem.h"
+#include "forcefunctor/fromfemmock.h"
 #include "dderror.h"
 #include <cmath>
 namespace dd {

@@ -25,18 +25,19 @@ namespace dd {
         return getSlipSystem()->getPointPosition(slipPlaneLocation, getOrigin());
     }
     
-    void SlipPlane::moveDislocations(double dt, double b) {
-        std::list<Point *> & dislocs = HashedRegistrable<Point>::getContainer<DislocationPoint>();
-        std::list<Point *> & obs = HashedRegistrable<Point>::getContainer<ObstaclePoint>();
-        std::vector<double> projections;
-        projections.reserve(dislocs.size());
-        std::list<Point *>::iterator it;
-       
-        // Release pins
+void SlipPlane::moveDislocations(double dt, double b) {
+    std::list<Point *> & dislocs = HashedRegistrable<Point>::getContainer<DislocationPoint>();
+    std::list<Point *> & obs = HashedRegistrable<Point>::getContainer<ObstaclePoint>();
+    std::vector<double> projections;
+    projections.reserve(dislocs.size());
+    std::list<Point *>::iterator it;
+
+    // Release pins
+    if (!dislocs.empty()) {
         for(auto ob : obs) {
             static_cast<ObstaclePoint *>(ob)->release();
         }
-        
+
         // Calculate new positions
         for(auto disloc : dislocs) {
             Vector<2> force, forceGradient;
@@ -45,25 +46,27 @@ namespace dd {
             double deltaPos = (1 / b) * (force.abs() / (1 - (dt * forceGradient.abs() / b)));
             projections.push_back(disloc->getSlipPlanePosition() + deltaPos);
         }
-        
+
         //
         // TODO: Clean the pinning; extract it
         //
-        
+
         // Negative pinning
         it = dislocs.begin();
         long long index = 0;
         for(auto nextOb = obs.begin(); it != dislocs.end() && nextOb != obs.end(); nextOb++) {
             ObstaclePoint * currentObstacle = static_cast<ObstaclePoint *>(*nextOb);
-            if(currentObstacle->negativePinned()) { continue; }
-            
+            if(currentObstacle->negativePinned()) {
+                continue;
+            }
+
             bool hasDisToLeft = false;
             while(it != dislocs.end() && (*it)->getSlipPlanePosition() < currentObstacle->getSlipPlanePosition()) {
                 hasDisToLeft = true;
                 it++;
                 index++;
             }
-            
+
             if(hasDisToLeft) {
                 it--;
                 index--;
@@ -74,21 +77,23 @@ namespace dd {
                 index++;
             }
         }
-        
+
         // Positive pinning
         auto revIt = dislocs.rbegin();
         index = projections.size() - 1;
         for(auto prevOb = obs.rbegin(); revIt != dislocs.rend() && prevOb != obs.rend(); prevOb++) {
             ObstaclePoint * currentObstacle = static_cast<ObstaclePoint *>(*prevOb);
-            if(currentObstacle->positivePinned()) { continue; }
-            
+            if(currentObstacle->positivePinned()) {
+                continue;
+            }
+
             bool hasDisToRight = false;
             while(revIt != dislocs.rend() && (*revIt)->getSlipPlanePosition() < currentObstacle->getSlipPlanePosition()) {
                 hasDisToRight = true;
                 revIt++;
                 index--;
             }
-            
+
             if(hasDisToRight) {
                 revIt--;
                 index++;
@@ -100,33 +105,37 @@ namespace dd {
             }
             prevOb++;
         }
-        
+
         // Sort
         it = --dislocs.end();
         bool pushRight = true;
         for(int i = dislocs.size() - 1; i >= 1; i--) {
             auto nextIt = it;
             nextIt--;
-            
+
             DislocationPoint * dis = static_cast<DislocationPoint *>(*it);
             DislocationPoint * nextDis = static_cast<DislocationPoint *>(*nextIt);
-            
-            if(dis->negativePin()) { continue; }
-            if(dis->positivePin()) { pushRight = false; }
-            
-            
+
+            if(dis->negativePin()) {
+                continue;
+            }
+            if(dis->positivePin()) {
+                pushRight = false;
+            }
+
+
             if(dis->getBurgersSign() == nextDis->getBurgersSign()) {
-            	if(pushRight) {
-                	projections[i] = std::max(projections[i],
-                							  projections[i - 1] + 2 * getBurgersMagnitude());
+                if(pushRight) {
+                    projections[i] = std::max(projections[i],
+                                              projections[i - 1] + 2 * getBurgersMagnitude());
                 }
                 else {
-                	projections[i - 1] = std::min(projections[i - 1],
-                    	                          projections[i] - 2 * getBurgersMagnitude());
+                    projections[i - 1] = std::min(projections[i - 1],
+                                                  projections[i] - 2 * getBurgersMagnitude());
                 }
             }
             else {
-            	pushRight = true;
+                pushRight = true;
                 if(projections[i] - projections[i - 1] < 6 * b * getBurgersMagnitude()) {
                     i--;
                     // dislocs.erase(it);
@@ -137,15 +146,16 @@ namespace dd {
                     delete (*nextIt);
                     continue;
                 }
-            }  
-            
+            }
+
             (*it)->updateLocation(PointLog((*it)->getSlipPlane(), projections[i]));
-            it = nextIt;      
+            it = nextIt;
         }
-        
+
         if(it == dislocs.begin()) {
             (*it)->updateLocation(PointLog((*it)->getSlipPlane(), projections[0]));
         }
     }
+}
 
 }

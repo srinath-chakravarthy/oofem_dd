@@ -6,6 +6,7 @@
 #include "domain.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <iostream>
 
 namespace dd {
     void SourcePoint::setCaches() {
@@ -23,7 +24,7 @@ namespace dd {
     	
     	if(__timer > tnuc) {
     		double nu = getDomain()->getPassionsRatio();
-    		double inuc = getDomain()->getModulus() / (4 * M_PI * (1 - nu * nu) * __strength);
+    		double inuc = getDomain()->getModulus() *getBurgersMagnitude() / (4 * M_PI * (1 - nu * nu) * __strength);
     		
     		double posNegative = getSlipPlanePosition() - 0.5 * inuc;
     		double posPositive = getSlipPlanePosition() + 0.5 * inuc;
@@ -31,6 +32,7 @@ namespace dd {
     		int signNeg = (ratio < 0)? 1 : -1;
     		int signPos = signNeg * -1;
     		
+		std::cout << "Generating dislocation";
     		std::list<Point *> & dislocs = getSlipPlane()->getContainer("DislocationPoint");
     		
     		auto antecedentIt = dislocs.begin();

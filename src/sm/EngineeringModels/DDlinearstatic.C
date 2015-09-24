@@ -244,7 +244,7 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
 		double nu = dd_domain.getPassionsRatio();
 		double mu = e / (2. * ( 1. + nu));
 		double fact = mu * ss0.getBurgersMagnitude() / ( 2 * M_PI * (1. - nu));
-		dd::SourcePoint s1 = dd::SourcePoint(&dd_domain, &sp0, 0, 25e-3, fact / 25e-3);
+		dd::SourcePoint s1 = dd::SourcePoint(&dd_domain, &sp0, 0, 25e-6, fact / 25e-6);
 		dd::Vector<2> force, forceGradient;
         dd::Vector<3> stress;
 
@@ -287,6 +287,7 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         	std::cout << "Cached Force: " << force[0] << " " << force[1];
         }
         s1.spawn(1, 5);
+	dd_domain.updateForceCaches(); 
         sp0.moveDislocations(1, 1);
         
         /*
