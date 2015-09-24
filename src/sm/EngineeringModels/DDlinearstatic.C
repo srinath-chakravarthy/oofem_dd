@@ -288,14 +288,16 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
     
         
         for( dd_domain.dtNo = 1; dd_domain.dtNo < dd_domain.dtNomax; dd_domain.dtNo++) {
-        dd_domain.updateForceCaches();        
+        dd_domain.updateForceCaches();
+	int disno = 1;
         for(auto point : dd_domain.getContainer<dd::DislocationPoint>()) {
         	point->sumCaches(force, forceGradient, stress);
-        	std::cout << "Cached Force: " << force[0] << " " << force[1];
+        	std::cout << "Cached Force: " << disno << " " << force[0] << " " << force[1] << "\n";
+		disno ++;
         }
         s1.spawn(1, 5);
 	dd_domain.updateForceCaches(); 
-        sp0.moveDislocations(1, 1);
+        sp0.moveDislocations(1.0e-11, 1.0e-16);
         
         /*
         for(int bcNo = 1; bcNo <= giveDomain(i)->giveNumberOfBoundaryConditions(); bcNo++) {

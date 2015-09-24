@@ -66,7 +66,7 @@ namespace dd {
         
         /// Temporary hack for Linear Time dependent force and stress everywhere in the domain 
         int dtNo = 0; 
-	int dtNomax = 1000;
+	int dtNomax = 100;
         
     };
 }
