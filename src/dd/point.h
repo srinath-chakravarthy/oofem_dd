@@ -7,6 +7,8 @@
 #include "vector.h"
 #include "forcecache.h"
 #include <vector>
+#include <iostream>
+
 /** Abstract Point Class defining a basic Point 
  * Point is is registered to a class Domain and a SlipPlane
  * All other Points --> Dislocations, Sources, Obstacles inherit the characteristics of this class
@@ -128,6 +130,7 @@ namespace dd {
          * Destructor
          */
         virtual ~Point() {
+	    std::cout << this << " destructed.\n";
             destructRegistrations();
         }
 

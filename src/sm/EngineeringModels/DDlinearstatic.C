@@ -77,6 +77,10 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+#include "../dd/forcefunctor/fromfem.h"
+#include "../dd/forcefunctor/fromfemmock.h"
+#include "../dd/forcefunctor/fromdislocations.h"
+
 
 namespace oofem {
 REGISTER_EngngModel(DDLinearStatic);
@@ -279,6 +283,9 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
 	
         std::cout << force[0] << " " << force[1] << "\n";
         */
+	
+	
+    
         
         for( dd_domain.dtNo = 1; dd_domain.dtNo < dd_domain.dtNomax; dd_domain.dtNo++) {
         dd_domain.updateForceCaches();        

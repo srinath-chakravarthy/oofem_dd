@@ -25,7 +25,9 @@ namespace dd {
         DislocationPoint(Domain * domain, SlipPlane * sPlane, double slipPlanePosition, int burgersSign);
         DislocationPoint(Domain * domain, SlipPlane * sPlane,
                          list<Point *>::iterator antecedentIt, double slipPlanePosition, int burgersSign);
-                         
+        
+	
+	
         virtual int getBurgersSign() const { return burgersSign; }
 
 		// TODO: Clear duplication

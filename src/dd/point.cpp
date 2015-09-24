@@ -7,11 +7,11 @@
 #include "forcefunctor/fromfemmock.h"
 #include "dderror.h"
 #include <cmath>
+#include <iostream>
 namespace dd {
     double Point::getBurgersMagnitude() const {
         return getSlipPlane()->getBurgersMagnitude();
     }
-
     int Point::getBurgersSign() const { return 1; }
 
     Vector<2> Point::getBurgersVector() const {
@@ -123,9 +123,6 @@ namespace dd {
     Vector<2> Point::cachedForce() const {
         Vector<2> force;
         for(unsigned i = 0; i < caches.size(); i++) {
-	    if (caches[i] == nullptr){
-	      int j = i;
-	    }
             force += caches[i].getForce();
         }
         return force;

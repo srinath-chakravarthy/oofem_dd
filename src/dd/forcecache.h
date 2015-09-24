@@ -18,14 +18,40 @@ namespace dd {
         Vector<3> stress;
         std::shared_ptr<ForceFunctor> functor;
     public:
+	/**
+	 * Constructor.
+	 * 
+	 * @param functor   Force functor
+	 */
         ForceCache(ForceFunctor * functor = nullptr);
         virtual ~ForceCache();
     
-    
+	/**
+	 * Get the cached force.
+	 * 
+	 * @returns cached force
+	 */
         Vector<2> getForce() const;
+	
+	/**
+	 * Get the cached force gradient.
+	 * 
+	 * @returns cached force gradient.
+	 */
         Vector<2> getForceGradient() const;
-        Vector<3> getStress() const;
         
+	/**
+	 * Get the cached stress
+	 * 
+	 * @returns cached stress.
+	 */
+	Vector<3> getStress() const;
+        
+	/**
+	 * Update the cache
+	 * 
+	 * @param point	   Point for which the force is calculated
+	 */
         void update(Point * point);
         
         virtual string typeName() const { return FORCECACHE_NAME; }

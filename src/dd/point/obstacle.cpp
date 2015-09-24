@@ -12,7 +12,12 @@ namespace dd {
     
     void ObstaclePoint::release() {
         bool releaseNegative = __negativePinned && checkRelease(__negativePinned);
-        bool releasePositive = (__positivePinned && releaseNegative) || checkRelease(__positivePinned);
+        bool releasePositive = __positivePinned && checkRelease(__positivePinned);
+	
+	if((releaseNegative && __positivePinned) ||
+	  (releasePositive && __negativePinned)) {
+	  DdError::exception("Pin release is not symmetric.\n");
+	}
         
         if(releaseNegative && releasePositive) {
             delete __negativePinned;
