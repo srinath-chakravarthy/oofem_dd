@@ -32,7 +32,7 @@ namespace dd {
     		int signNeg = (ratio < 0)? 1 : -1;
     		int signPos = signNeg * -1;
     		
-		std::cout << "Generating dislocation";
+		
     		std::list<Point *> & dislocs = slipPlane()->getContainer("DislocationPoint");
     		
     		auto antecedentIt = dislocs.begin();
@@ -45,7 +45,8 @@ namespace dd {
     			new DislocationPoint(domain(), slipPlane(), antecedentIt, posNegative, signNeg);
     			new DislocationPoint(domain(), slipPlane(), antecedentIt, posPositive, signPos);
     		}
-    		
+    		std::cout << "Generating dislocatios" << posNegative << " and " << posPositive << "\n";
+		__timer = 0.0;
     	}
     }
 }

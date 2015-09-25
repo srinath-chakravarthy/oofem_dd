@@ -43,7 +43,7 @@ void SlipPlane::moveDislocations(double dt, double b) {
             Vector<2> force, forceGradient;
             Vector<3> stress;
             disloc->sumCaches(force, forceGradient, stress);
-            double deltaPos = (1 / b) * (force.abs() / (1 - (dt * forceGradient.abs() / b)));
+            double deltaPos = (1 / b) * (force[0] / (1 - (dt * forceGradient[0] / b))) * dt;
             projections.push_back(disloc->slipPlanePosition() + deltaPos);
         }
 

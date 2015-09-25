@@ -237,25 +237,24 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         dd::OofemInterface * interface = new dd::OofemInterface(this);
         */
         dd::Domain dd_domain(70e-3, 0.3, NULL);
-        dd::SlipSystem ss0 = dd::SlipSystem(M_PI/6.0, 0.25e-3);
+        dd::SlipSystem ss0 = dd::SlipSystem(0.0, 0.25e-3);
         dd_domain.addSlipSystem(&ss0);
 
-        dd::SlipPlane sp0 = dd::SlipPlane(&dd_domain, &ss0, 1);
+        dd::SlipPlane sp0 = dd::SlipPlane(&dd_domain, &ss0, 0.0);
 
-		dd::ObstaclePoint o0 = dd::ObstaclePoint(&dd_domain, &sp0, -0.5, 20.0e3);
-		dd::ObstaclePoint o1 = dd::ObstaclePoint(&dd_domain, &sp0, 0.5, 20.0e3);
+		dd::ObstaclePoint o0 = dd::ObstaclePoint(&dd_domain, &sp0, -0.25, 20.0e3);
+		dd::ObstaclePoint o1 = dd::ObstaclePoint(&dd_domain, &sp0, 0.25, 20.0e3);
 		double e = dd_domain.getModulus();
 		double nu = dd_domain.getPassionsRatio();
 		double mu = e / (2. * ( 1. + nu));
 		double fact = mu * ss0.getBurgersMagnitude() / ( 2 * M_PI * (1. - nu));
+		
 		dd::SourcePoint s1 = dd::SourcePoint(&dd_domain, &sp0, 0, 25e-6, fact / 25e-6);
-		dd::Vector<2> force, forceGradient;
-        dd::Vector<3> stress;
 
-		/*
-        dd::DislocationPoint dis0 = dd::DislocationPoint(&dd_domain, &sp0, 0, 1);
-        dd::DislocationPoint dis1 = dd::DislocationPoint(&dd_domain, &sp0, 1, -1);
-
+	
+        //dd::DislocationPoint dis0 = dd::DislocationPoint(&dd_domain, &sp0, -0.5, 1);
+        //dd::DislocationPoint dis1 = dd::DislocationPoint(&dd_domain, &sp0, 0.5, -1);
+        /*  
         std::cout << "Dislocation point count: " << sp0.getContainer<dd::DislocationPoint>().size() << "\n";
         
 	
@@ -288,58 +287,64 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
     
         
         for( dd_domain.dtNo = 1; dd_domain.dtNo < dd_domain.dtNomax; dd_domain.dtNo++) {
-        dd_domain.updateForceCaches();
-	int disno = 1;
-        for(auto point : dd_domain.getContainer<dd::DislocationPoint>()) {
-        	point->sumCaches(force, forceGradient, stress);
-        	std::cout << "Cached Force: " << disno << " " << force[0] << " " << force[1] << "\n";
-		disno ++;
-        }
-        s1.spawn(1, 5);
-	dd_domain.updateForceCaches(); 
-        sp0.moveDislocations(1.0e-11, 1.0e-16);
-        
-        /*
-        for(int bcNo = 1; bcNo <= giveDomain(i)->giveNumberOfBoundaryConditions(); bcNo++) {
-        	ManualBoundaryCondition * bc = dynamic_cast<ManualBoundaryCondition *>(giveDomain(i)->giveBc(bcNo));
-        	if(bc == nullptr || bc->giveType() != DirichletBT) { continue; }
-        	
-        	dd::Vector<2> bcContribution;
-        	
-        	Domain * d = bc->giveDomain();
-        	Set * set = d->giveSet(bc->giveSetNumber());
-        	
-        	
-        	for(int nodeNo : set->giveNodeList()) {
-                Node * node = static_cast<Node *>(d->giveDofManager(nodeNo));
-                for (auto &dofid : bc->giveDofIDs()) {
-                    Dof * dof = node->giveDofWithID(dofid);
-                    interface->giveNodalBcContribution(node, bcContribution);
-                    // TODO: Determine the dimensions without pointer checking
-                    double toAdd;
-                    if(dof->giveDofID() == D_u) {
-                        toAdd = bcContribution[0];
-                    }
-                    else if(dof->giveDofID() == D_v) {
-                        toAdd = bcContribution[1];
-                    }
-                    else { 
-                        OOFEM_ERROR("DOF must be x-disp or y-disp");
-                    }
-                    bc->addManualValue(dof, toAdd);
-                }
+            dd_domain.updateForceCaches();
+            int disno = 1;
+            for(auto point : dd_domain.getContainer<dd::DislocationPoint>()) {
+		dd::Vector<2> force, forceGradient;
+		dd::Vector<3> stress;
+		force = dd::Vector<2>({0.0,0.0});
+		
+		//point->sumCaches(force, forceGradient, stress);
+		force = point->cachedForce();
+		stress = point->cachedStress();
+                std::cout << "Cached Force: " << disno << " " << point->getBurgersSign() << " " <<  force[0] << " " << stress[2] << " " << point->slipPlanePosition() << "\n";
+                disno ++;
             }
-            
-        	
-        	
-            std::cout << "BC Contribution: " << bcContribution[0] << " " << bcContribution[1] << "\n";
-                      
-        }
-        
-        */
-        
-		//delete interface;
-		} // end dtNo loop
+            s1.spawn(1, 5);
+            dd_domain.updateForceCaches();
+            sp0.moveDislocations(1.0e-11, 1.0e-18);
+
+            /*
+            for(int bcNo = 1; bcNo <= giveDomain(i)->giveNumberOfBoundaryConditions(); bcNo++) {
+            	ManualBoundaryCondition * bc = dynamic_cast<ManualBoundaryCondition *>(giveDomain(i)->giveBc(bcNo));
+            	if(bc == nullptr || bc->giveType() != DirichletBT) { continue; }
+
+            	dd::Vector<2> bcContribution;
+
+            	Domain * d = bc->giveDomain();
+            	Set * set = d->giveSet(bc->giveSetNumber());
+
+
+            	for(int nodeNo : set->giveNodeList()) {
+                    Node * node = static_cast<Node *>(d->giveDofManager(nodeNo));
+                    for (auto &dofid : bc->giveDofIDs()) {
+                        Dof * dof = node->giveDofWithID(dofid);
+                        interface->giveNodalBcContribution(node, bcContribution);
+                        // TODO: Determine the dimensions without pointer checking
+                        double toAdd;
+                        if(dof->giveDofID() == D_u) {
+                            toAdd = bcContribution[0];
+                        }
+                        else if(dof->giveDofID() == D_v) {
+                            toAdd = bcContribution[1];
+                        }
+                        else {
+                            OOFEM_ERROR("DOF must be x-disp or y-disp");
+                        }
+                        bc->addManualValue(dof, toAdd);
+                    }
+                }
+
+
+
+                std::cout << "BC Contribution: " << bcContribution[0] << " " << bcContribution[1] << "\n";
+
+            }
+
+            */
+
+            //delete interface;
+        } // end dtNo loop
     }
 
 
