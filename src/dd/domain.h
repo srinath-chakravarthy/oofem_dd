@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "hashedregistrable.h"
+#include "registrable/hashedregistrable.h"
 #include "ddobject.h"
 #include "vector.h"
 #include "timemanager.h"

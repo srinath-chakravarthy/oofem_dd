@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hashedregistrable.h"
+#include "registrable/hashedregistrable.h"
 #include "registration.h"
 #include "domain.h"
 #include "vector.h"

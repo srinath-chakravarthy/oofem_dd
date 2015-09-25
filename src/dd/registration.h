@@ -1,7 +1,7 @@
 #ifndef REGISTRATION_H_INCLUDED
 #define REGISTRATION_H_INCLUDED
 
-#include "hashedregistrable.h"
+#include "registrable/hashedregistrable.h"
 
 namespace dd {
 

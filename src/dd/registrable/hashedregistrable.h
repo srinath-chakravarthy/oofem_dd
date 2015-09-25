@@ -1,7 +1,7 @@
 #ifndef HASHEDREGISTRABLE_H_INCLUDED
 #define HASHEDREGISTRABLE_H_INCLUDED
 
-#include "ddobject.h"
+#include "registrable.h"
 #include <unordered_map>
 
 namespace dd {
@@ -11,7 +11,7 @@ namespace dd {
      * objects of type T *.
      */
     template <typename T, typename Container = list<T *>>
-    class HashedRegistrable : public DdObject {
+    class HashedRegistrable : public Registrable<T, Container> {
 #define HASHEDREGISTRABLE_NAME "HashedRegistrable"
     public:
         std::unordered_map<string, Container> containers;

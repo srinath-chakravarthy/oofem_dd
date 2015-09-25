@@ -4,7 +4,7 @@
 #include "ddobject.h"
 #include "vector.h"
 #include <cmath>
-#include "hashedregistrable.h"
+#include "registrable/hashedregistrable.h"
 #include <set>
 
 namespace dd {
