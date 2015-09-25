@@ -18,6 +18,9 @@
 
 namespace dd {
 
+    /**
+     * History log entity for points.
+     */
     struct PointLog {
         SlipPlane * slipPlane;
         double slipPlanePosition;
@@ -40,30 +43,16 @@ namespace dd {
         /**
          * Destruct domain registration
          */
-        void destructDomainRegistration() {
-            if(domainRegistration != nullptr) {
-                delete domainRegistration;
-                domainRegistration = nullptr;
-            }
-        }
-
+        void destructDomainRegistration();
         /**
          * Destruct sPlaneRegistration
          */
-        void destructsPlaneRegistration() {
-            if(sPlaneRegistration != nullptr) {
-                delete sPlaneRegistration;
-                sPlaneRegistration = nullptr;
-            }
-        }
+        void destructPlaneRegistration();
 
         /**
          * Destruct both registrations
          */
-        void destructRegistrations() {
-            destructDomainRegistration();
-            destructsPlaneRegistration();
-        }
+        void destructRegistrations();
 
         /**
          * Sets the Registration objects.
@@ -72,33 +61,12 @@ namespace dd {
          * During the construction process, the correct type name string is not
          * produced due to unfinished vtable.
          */
-        void setRegistrations(Domain * domain, SlipPlane * sPlane, const typename list<Point *>::iterator & antecedentIt) {
-            destructRegistrations();
-            if(domain != nullptr) {
-                this->domainRegistration = new Registration<Point, list< Point *>, Domain>(this,
-                                                                           				   domain);
-            }
-            if(sPlane != nullptr) {
-                this->sPlaneRegistration = new Registration<Point, list< Point *>, SlipPlane>(this,
-                                                                              				  sPlane,
-                                                                              				  antecedentIt);
-            }
-        }
+        void setRegistrations(Domain * domain, SlipPlane * sPlane, const typename list<Point *>::iterator & antecedentIt);
 
         /**
          * Externally set the registrations
          */
-        void setRegistrations(Domain * domain, SlipPlane * sPlane) {
-            destructRegistrations();
-            if(domain != nullptr) {
-                this->domainRegistration = new Registration<Point, list< Point *>, Domain>(this,
-                                                                           domain);
-            }
-            if(sPlane != nullptr) {
-                this->sPlaneRegistration = new Registration<Point, list< Point *>, SlipPlane>(this,
-                                                                              sPlane);
-            }
-        }
+        void setRegistrations(Domain * domain, SlipPlane * sPlane);
 
     public:
 
@@ -130,14 +98,13 @@ namespace dd {
          * Destructor
          */
         virtual ~Point() {
-	    std::cout << this << " destructed.\n";
             destructRegistrations();
         }
 
         /// Returns the domain containing the Point
-        Domain * getDomain() const { return domainRegistration->getTarget(); }
+        Domain * getDomain() const { return domainRegistration->target(); }
         /// Returns SlipPlane containing the point
-        SlipPlane * getSlipPlane() const { return sPlaneRegistration->getTarget(); }
+        SlipPlane * getSlipPlane() const { return sPlaneRegistration->target(); }
         /// Returns Position on the SlipPlane containing the point
         Vector<2> getLocation() const { return getSlipPlane()->getPointPosition(slipPlanePosition); }
         

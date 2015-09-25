@@ -13,7 +13,7 @@ namespace dd {
         slipSystemRegistration(this, slipSystem),
         __normalDistance(normalDistance) { }
 
-    SlipSystem * SlipPlane::getSlipSystem() const { return slipSystemRegistration.getTarget(); }
+    SlipSystem * SlipPlane::getSlipSystem() const { return slipSystemRegistration.target(); }
     double SlipPlane::getAngle() const { return getSlipSystem()->getAngle(); }
     double SlipPlane::getCos() const { return getSlipSystem()->getCos(); }
     double SlipPlane::getSin() const { return getSlipSystem()->getSin(); }

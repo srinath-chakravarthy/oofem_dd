@@ -9,15 +9,57 @@
 #include <cmath>
 #include <iostream>
 namespace dd {
-    double Point::getBurgersMagnitude() const {
-        return getSlipPlane()->getBurgersMagnitude();
+
+    void Point::destructDomainRegistration() { 
+	if(domainRegistration != nullptr) {
+	    delete domainRegistration;
+	    domainRegistration = nullptr;
+	}
     }
+            
+    void Point::destructPlaneRegistration() {
+	if(sPlaneRegistration != nullptr) {
+	    delete sPlaneRegistration;
+	    sPlaneRegistration = nullptr;
+	}
+    }
+
+    void Point::destructRegistrations() {
+      destructPlaneRegistration();
+      destructDomainRegistration();
+    }
+    
+    void Point::setRegistrations(Domain * domain, SlipPlane * sPlane, const typename list<Point *>::iterator & antecedentIt) {
+	destructRegistrations();
+	if(domain != nullptr) {
+	    this->domainRegistration = new Registration<Point, list< Point *>, Domain>(this,
+													domain);
+	}
+	if(sPlane != nullptr) {
+	    this->sPlaneRegistration = new Registration<Point, list< Point *>, SlipPlane>(this,
+												      sPlane,
+												      antecedentIt);
+	}
+    }
+    
+    void Point::setRegistrations(Domain * domain, SlipPlane * sPlane) {
+	destructRegistrations();
+	if(domain != nullptr) {
+	    this->domainRegistration = new Registration<Point, list< Point *>, Domain>(this,
+									domain);
+	}
+	if(sPlane != nullptr) {
+	    this->sPlaneRegistration = new Registration<Point, list< Point *>, SlipPlane>(this,
+									  sPlane);
+	}
+    }
+    
+    double Point::getBurgersMagnitude() const { return getSlipPlane()->getBurgersMagnitude(); }
     int Point::getBurgersSign() const { return 1; }
+    Vector<2> Point::getBurgersVector() const { return getSlipPlane()->getBurgersVector(); }
 
-    Vector<2> Point::getBurgersVector() const {
-        return getSlipPlane()->getBurgersVector();
-    }
 
+    
     void Point::addForceContribution(const Point * & p, Vector<2> & force,
                                      Vector<2> & v2, Vector<3> & stress) {
 	double e = getDomain()->getModulus();
