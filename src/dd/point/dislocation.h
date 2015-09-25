@@ -2,6 +2,7 @@
 #define DISLOCATION_H
 
 #include "../dderror.h"
+#include "../point.h"
 
 namespace dd {
 

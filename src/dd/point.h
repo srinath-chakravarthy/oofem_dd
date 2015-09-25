@@ -38,7 +38,7 @@ namespace dd {
         std::vector<ForceCache> caches;
         Registration<Point, list<Point *>, Domain> * domainRegistration = nullptr; /*!< Pointer to a registered Domain */
         Registration<Point, list<Point *>, SlipPlane> * sPlaneRegistration = nullptr; /*!< pointer to a registerd SlipPlane */
-        double slipPlanePosition = 0; /* !< Local Postion of point on SlipPlane */
+        double __slipPlanePosition = 0; /* !< Local Postion of point on SlipPlane */
 
         /**
          * Destruct domain registration
@@ -75,7 +75,7 @@ namespace dd {
          */
         Point(Domain * domain, SlipPlane * sPlane, typename list<Point *>::iterator antecedentIt,
               double slipPlanePosition) :
-                  slipPlanePosition(slipPlanePosition) {
+                  __slipPlanePosition(slipPlanePosition) {
             setRegistrations(domain, sPlane, antecedentIt);
         }
 
@@ -83,7 +83,7 @@ namespace dd {
          * Register the point to the end of the sPlane.
          */
         Point(Domain * domain, SlipPlane * sPlane, double slipPlanePosition) :
-            slipPlanePosition(slipPlanePosition) {
+            __slipPlanePosition(slipPlanePosition) {
             setRegistrations(domain, sPlane);
         }
 
@@ -102,21 +102,24 @@ namespace dd {
         }
 
         /// Returns the domain containing the Point
-        Domain * getDomain() const { return domainRegistration->target(); }
+        Domain * domain() const { return domainRegistration->target(); }
         /// Returns SlipPlane containing the point
-        SlipPlane * getSlipPlane() const { return sPlaneRegistration->target(); }
+        SlipPlane * slipPlane() const { return sPlaneRegistration->target(); }
         /// Returns Position on the SlipPlane containing the point
-        Vector<2> getLocation() const { return getSlipPlane()->getPointPosition(slipPlanePosition); }
+        Vector<2> location() const { return slipPlane()->getPointPosition(__slipPlanePosition); }
         
-        double getSlipPlanePosition() const { return slipPlanePosition; }
+        double slipPlanePosition() const { return __slipPlanePosition; }
 
 
-    /**
+	/**
 	 * Abstract method to get sign of burgers Vector at a point
 	 * The inherited class will define the method
+         * 
+         * @returns       Burgers sign of the point
 	 */ 
         virtual int getBurgersSign() const;
 
+        
         double getBurgersMagnitude() const; /*!< Return Magnitude of BurgersVector from base slipsystem */
         Vector2d getBurgersVector() const; /* !< Return Burgers Vector from bas SlipSystem */ 
 
@@ -127,7 +130,6 @@ namespace dd {
 	 * @param force_gradient vector contain gradient along slip direction and perpendicular to slip direction
 	 * @param stress vector containing the 2D vector components of the stress (stress_xx, stress_yy, stress_xy)
 	 */ 
-
         virtual void addForceContribution(const Point * &, Vector<2> &force,
                                           Vector<2> &force_gradient, Vector<3> &stress);
 
@@ -137,8 +139,7 @@ namespace dd {
 	 * @param force vector containing glide and climb forces 
 	 * @param force_gradient vector contain gradient along slip direction and perpendicular to slip direction
 	 * @param stress vector containing the 2D vector components of the stress (stress_xx, stress_yy, stress_xy)
-	 */ 
-	
+	 */
         virtual void addForceContribution(const list<Point *> &Point_list, Vector<2> &force,
                                           Vector<2> &force_gradient, Vector<3> &stress);
 	
@@ -162,7 +163,7 @@ namespace dd {
 	 */ 
         template <typename T>
         void addForceContribution(Vector<2> & force, Vector<2> & force_gradient, Vector<3> & stress) {
-            addForceContribution(getDomain()->getContainer<T>(), force, force_gradient, stress);
+            addForceContribution(domain()->getContainer<T>(), force, force_gradient, stress);
         }
     
         /**

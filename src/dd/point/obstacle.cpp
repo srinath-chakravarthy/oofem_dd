@@ -26,19 +26,19 @@ namespace dd {
             __positivePinned = nullptr;
         }
         else if(releaseNegative) {
-            __negativePinned->updateLocation(__negativePinned->getSlipPlanePosition() + 4 * __negativePinned->getBurgersMagnitude());
+            __negativePinned->updateLocation(__negativePinned->slipPlanePosition() + 4 * __negativePinned->getBurgersMagnitude());
             __negativePinned->positiveUnpin();
             __negativePinned = nullptr;
         }
         else if(releasePositive) {
-            __positivePinned->updateLocation(__positivePinned->getSlipPlanePosition() - 4 * __positivePinned->getBurgersMagnitude());
+            __positivePinned->updateLocation(__positivePinned->slipPlanePosition() - 4 * __positivePinned->getBurgersMagnitude());
             __positivePinned->negativeUnpin();
             __positivePinned = nullptr;        
         }
     }
     
     void ObstaclePoint::pin(DislocationPoint * point) {
-        if(point->getSlipPlanePosition() < getSlipPlanePosition()) {
+        if(point->slipPlanePosition() < slipPlanePosition()) {
             if(__negativePinned == point) { return; }
             if(__negativePinned) { DdError::exception("Obstacle has a dislocation pinned at the negative side."); }
             __negativePinned = point;

@@ -54,23 +54,23 @@ namespace dd {
 	}
     }
     
-    double Point::getBurgersMagnitude() const { return getSlipPlane()->getBurgersMagnitude(); }
+    double Point::getBurgersMagnitude() const { return slipPlane()->getBurgersMagnitude(); }
     int Point::getBurgersSign() const { return 1; }
-    Vector<2> Point::getBurgersVector() const { return getSlipPlane()->getBurgersVector(); }
+    Vector<2> Point::getBurgersVector() const { return slipPlane()->getBurgersVector(); }
 
 
     
     void Point::addForceContribution(const Point * & p, Vector<2> & force,
                                      Vector<2> & v2, Vector<3> & stress) {
-	double e = getDomain()->getModulus();
-	double nu = getDomain()->getPassionsRatio();
+	double e = domain()->getModulus();
+	double nu = domain()->getPassionsRatio();
 	double mu = e / (2. * (1. + nu));
         double factor = mu / (4. * M_PI * (1. - nu));
 
         double cutOff = 2 * std::abs(this->getBurgersMagnitude());
         Complex b(this->getBurgersVector());
-        Complex z(this->getLocation());
-	Complex thetaz(this->getSlipPlane()->getCos(), -this->getSlipPlane()->getSin());
+        Complex z(this->location());
+	Complex thetaz(this->slipPlane()->getCos(), -this->slipPlane()->getSin());
 
         double sig11 = 0;
         double sig22 = 0;
@@ -79,7 +79,7 @@ namespace dd {
         double sig22z = 0;
         double sig12z = 0;
 
-        Complex zSource(p->getLocation());
+        Complex zSource(p->location());
         Complex dz = z - zSource;
         double zd = dz.abs();
 	
@@ -110,7 +110,7 @@ namespace dd {
 	  Complex th;
 	  if (zd > 1.e-4) { 
 	    if (dz.real() == 0.){
-	       th = Complex(0., ::asin(this->getSlipPlane()->getSin()));
+	       th = Complex(0., ::asin(this->slipPlane()->getSin()));
 	    }
 	    else {
 	      th = Complex(0., dz.log().imag());
@@ -130,10 +130,10 @@ namespace dd {
 	  }
 	}
 
-        double cos2i = ::cos(2. * this->getSlipPlane()->getAngle());
-        double sin2i = ::sin(2. * this->getSlipPlane()->getAngle());
+        double cos2i = ::cos(2. * this->slipPlane()->getAngle());
+        double sin2i = ::sin(2. * this->slipPlane()->getAngle());
 
-        double bi = std::abs(getSlipPlane()->getBurgersMagnitude()) * getBurgersSign() *
+        double bi = std::abs(slipPlane()->getBurgersMagnitude()) * getBurgersSign() *
                     ((sig22 - sig11) * .5 * sin2i + sig12 * cos2i);
 
         force += Vector<2>({bi, 0});
@@ -148,7 +148,7 @@ namespace dd {
     }
 
     void Point::addForceContribution(const string & key, Vector<2> & force, Vector<2> & v2, Vector<3> & stress) {
-        addForceContribution(getDomain()->getContainer(key), force, v2, stress);
+        addForceContribution(domain()->getContainer(key), force, v2, stress);
     }
     
     /**
@@ -191,14 +191,14 @@ namespace dd {
     }
     
     void Point::updateLocation(PointLog projectedLocation) {
-        if(getSlipPlane() != projectedLocation.slipPlane) {
+        if(slipPlane() != projectedLocation.slipPlane) {
             DdError::exception("Unimplemented.");
         }
-        slipPlanePosition = projectedLocation.slipPlanePosition;
+        __slipPlanePosition = projectedLocation.slipPlanePosition;
         history.push_front(new PointLog(projectedLocation));
     }
     void Point::updateLocation(const double & slipPlanePosition) {
-        updateLocation(PointLog(getSlipPlane(), slipPlanePosition));
+        updateLocation(PointLog(slipPlane(), slipPlanePosition));
     }
 }
 

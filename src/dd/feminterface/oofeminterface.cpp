@@ -19,8 +19,8 @@ namespace dd {
                                         Vector<2> &forceGradient, Vector<3> &stress) {
     	for(int i = 1; i <= engModel->giveNumberOfDomains(); i++) {
             oofem::FloatArray localCoordinates, strainElem, stressElem;
-            oofem::Element * e = engModel->giveDomain(i)->giveSpatialLocalizer()->giveElementContainingPoint(point->getLocation());
-            e->computeLocalCoordinates(localCoordinates, point->getLocation());
+            oofem::Element * e = engModel->giveDomain(i)->giveSpatialLocalizer()->giveElementContainingPoint(point->location());
+            e->computeLocalCoordinates(localCoordinates, point->location());
                
             oofem::GaussPoint gp(e->giveDefaultIntegrationRulePtr(), -1,
                                  localCoordinates, 1, e->giveMaterialMode());
@@ -29,8 +29,8 @@ namespace dd {
             se->computeStressVector(stressElem, strainElem, &gp, engModel->giveCurrentStep());
                         
             force += point->getBurgersMagnitude() * point->getBurgersSign() *
-                     (((stressElem[1] - stressElem[2]) * point->getSlipPlane()->getCos()) + 
-                       stressElem[3] * point->getSlipPlane()->getSin() / 2);
+                     (((stressElem[1] - stressElem[2]) * point->slipPlane()->getCos()) + 
+                       stressElem[3] * point->slipPlane()->getSin() / 2);
                 
         } 
     }

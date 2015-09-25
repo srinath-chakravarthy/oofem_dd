@@ -13,7 +13,7 @@ namespace dd {
 	}
 	
 	void FromFem::calculate(Point * point, Vector<2> & force, Vector<2> & forceGradient, Vector<3> stress) {
-		point->getDomain()->addFEMContribution(point, force, forceGradient, stress);
+		point->domain()->addFEMContribution(point, force, forceGradient, stress);
 	}
 
 }

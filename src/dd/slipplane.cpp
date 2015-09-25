@@ -44,7 +44,7 @@ void SlipPlane::moveDislocations(double dt, double b) {
             Vector<3> stress;
             disloc->sumCaches(force, forceGradient, stress);
             double deltaPos = (1 / b) * (force.abs() / (1 - (dt * forceGradient.abs() / b)));
-            projections.push_back(disloc->getSlipPlanePosition() + deltaPos);
+            projections.push_back(disloc->slipPlanePosition() + deltaPos);
         }
 
         //
@@ -61,7 +61,7 @@ void SlipPlane::moveDislocations(double dt, double b) {
             }
 
             bool hasDisToLeft = false;
-            while(it != dislocs.end() && (*it)->getSlipPlanePosition() < currentObstacle->getSlipPlanePosition()) {
+            while(it != dislocs.end() && (*it)->slipPlanePosition() < currentObstacle->slipPlanePosition()) {
                 hasDisToLeft = true;
                 it++;
                 index++;
@@ -70,7 +70,7 @@ void SlipPlane::moveDislocations(double dt, double b) {
             if(hasDisToLeft) {
                 it--;
                 index--;
-                if(projections[index] > currentObstacle->getSlipPlanePosition() - 2 * currentObstacle->getBurgersMagnitude()) {
+                if(projections[index] > currentObstacle->slipPlanePosition() - 2 * currentObstacle->getBurgersMagnitude()) {
                     currentObstacle->pin(static_cast<DislocationPoint *>(*it));
                 }
                 it++;
@@ -88,7 +88,7 @@ void SlipPlane::moveDislocations(double dt, double b) {
             }
 
             bool hasDisToRight = false;
-            while(revIt != dislocs.rend() && (*revIt)->getSlipPlanePosition() < currentObstacle->getSlipPlanePosition()) {
+            while(revIt != dislocs.rend() && (*revIt)->slipPlanePosition() < currentObstacle->slipPlanePosition()) {
                 hasDisToRight = true;
                 revIt++;
                 index--;
@@ -97,7 +97,7 @@ void SlipPlane::moveDislocations(double dt, double b) {
             if(hasDisToRight) {
                 revIt--;
                 index++;
-                if(projections[index] < currentObstacle->getSlipPlanePosition() + 2 * currentObstacle->getBurgersMagnitude()) {
+                if(projections[index] < currentObstacle->slipPlanePosition() + 2 * currentObstacle->getBurgersMagnitude()) {
                     currentObstacle->pin(static_cast<DislocationPoint *>(*revIt));
                 }
                 revIt++;
@@ -148,12 +148,12 @@ void SlipPlane::moveDislocations(double dt, double b) {
                 }
             }
 
-            (*it)->updateLocation(PointLog((*it)->getSlipPlane(), projections[i]));
+            (*it)->updateLocation(PointLog((*it)->slipPlane(), projections[i]));
             it = nextIt;
         }
 
         if(it == dislocs.begin()) {
-            (*it)->updateLocation(PointLog((*it)->getSlipPlane(), projections[0]));
+            (*it)->updateLocation(PointLog((*it)->slipPlane(), projections[0]));
         }
     }
 }

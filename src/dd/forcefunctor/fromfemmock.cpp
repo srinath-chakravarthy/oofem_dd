@@ -14,9 +14,9 @@ namespace dd {
 	}
 	
 	void FromFemMock::calculate(Point * point, Vector<2> & force, Vector<2> & forceGradient, Vector<3> stress) {
-	      double slope = 500e-3/ point->getDomain()->dtNomax;
+	      double slope = 500e-3/ point->domain()->dtNomax;
 	      double bmag = point->getBurgersMagnitude();
-	      int t = point->getDomain()->dtNo;
+	      int t = point->domain()->dtNo;
 	      double sig = double(t) * slope;
 	      double f = sig * bmag; 
 	      force = {f, 0.};

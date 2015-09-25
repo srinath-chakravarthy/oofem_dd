@@ -26,8 +26,8 @@ namespace dd {
             double cutOff = 2 * abs(point->getBurgersMagnitude());
             Complex z0(coords);
             Complex b(point->getBurgersVector());
-            Complex z(point->getLocation());
-            Complex slip(point->getSlipPlane()->getSlipSystem()->getDirection());
+            Complex z(point->location());
+            Complex slip(point->slipPlane()->getSlipSystem()->getDirection());
             Complex uu;
             Complex dz = z0 - z;
             double zd = dz.abs();

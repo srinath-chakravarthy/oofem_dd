@@ -23,27 +23,27 @@ namespace dd {
     	}
     	
     	if(__timer > tnuc) {
-    		double nu = getDomain()->getPassionsRatio();
-    		double inuc = getDomain()->getModulus() *getBurgersMagnitude() / (4 * M_PI * (1 - nu * nu) * __strength);
+    		double nu = domain()->getPassionsRatio();
+    		double inuc = domain()->getModulus() *getBurgersMagnitude() / (4 * M_PI * (1 - nu * nu) * __strength);
     		
-    		double posNegative = getSlipPlanePosition() - 0.5 * inuc;
-    		double posPositive = getSlipPlanePosition() + 0.5 * inuc;
+    		double posNegative = slipPlanePosition() - 0.5 * inuc;
+    		double posPositive = slipPlanePosition() + 0.5 * inuc;
     		
     		int signNeg = (ratio < 0)? 1 : -1;
     		int signPos = signNeg * -1;
     		
 		std::cout << "Generating dislocation";
-    		std::list<Point *> & dislocs = getSlipPlane()->getContainer("DislocationPoint");
+    		std::list<Point *> & dislocs = slipPlane()->getContainer("DislocationPoint");
     		
     		auto antecedentIt = dislocs.begin();
     		
-    		while(antecedentIt != dislocs.end() && (*antecedentIt)->getSlipPlanePosition() < posNegative) {
+    		while(antecedentIt != dislocs.end() && (*antecedentIt)->slipPlanePosition() < posNegative) {
     			antecedentIt++;
     		}
     		
-    		if(antecedentIt == dislocs.end() || (*antecedentIt)->getSlipPlanePosition() > posPositive) {
-    			new DislocationPoint(getDomain(), getSlipPlane(), antecedentIt, posNegative, signNeg);
-    			new DislocationPoint(getDomain(), getSlipPlane(), antecedentIt, posPositive, signPos);
+    		if(antecedentIt == dislocs.end() || (*antecedentIt)->slipPlanePosition() > posPositive) {
+    			new DislocationPoint(domain(), slipPlane(), antecedentIt, posNegative, signNeg);
+    			new DislocationPoint(domain(), slipPlane(), antecedentIt, posPositive, signPos);
     		}
     		
     	}
