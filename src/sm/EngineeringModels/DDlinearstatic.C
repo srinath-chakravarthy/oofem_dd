@@ -252,11 +252,10 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         dd::SourcePoint s1 = dd::SourcePoint(&dd_domain, &sp0, 0, 25e-6, fact / 25e-6);
         
         for( dd_domain.dtNo = 1; dd_domain.dtNo < dd_domain.dtNomax; dd_domain.dtNo++) {
-            std::cerr << "Total dislocs in domain: " << dd_domain.getContainer<dd::DislocationPoint>().size() << "\n";
+            std::cerr << "Total dislocs in domain: " << sp0.getContainer<dd::DislocationPoint>().size() << "\n";
             std::cerr << "Dislocs: " << sp0.dumpToString<dd::DislocationPoint>() << "\n";
             std::cerr.flush();
             dd_domain.updateForceCaches();
-            int disno = 1;
             for(auto point : dd_domain.getContainer<dd::DislocationPoint>()) {
 		dd::Vector<2> force, forceGradient;
 		dd::Vector<3> stress;
@@ -265,12 +264,11 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
 		//point->sumCaches(force, forceGradient, stress);
 		force = point->cachedForce();
 		stress = point->cachedStress();
-                std::cout << "Cached Force: " << disno << " " << point->getBurgersSign() << " " <<  force[0] << " " << stress[2] << " " << point->slipPlanePosition() << "\n";
-                disno ++;
+                std::cout << "Cached Force at " <<  point->slipPlanePosition() << ": " << point->getBurgersSign() << " " <<  force[0] << " " << stress[2] << " " << point->slipPlanePosition() << "\n";
             }
-            s1.spawn(1, 5);
             dd_domain.updateForceCaches();
-            sp0.moveDislocations(1.0e-11, 1.0e-18);
+            dd_domain.moveDislocations(1.0e-11, 1.0e-18);
+            s1.spawn(1, 5);
             
             /*
             for(int bcNo = 1; bcNo <= giveDomain(i)->giveNumberOfBoundaryConditions(); bcNo++) {

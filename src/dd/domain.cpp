@@ -13,6 +13,8 @@
 #include "gausspoint.h"
 #include "../sm/Elements/structuralelement.h"
 
+#include <iostream>
+
 namespace dd {
 
     Domain::Domain(const double & propModulus, const double & propPassionsRatio, FemInterface * femInterface) :
@@ -39,9 +41,9 @@ namespace dd {
     
     void Domain::moveDislocations(double dt, double b) {
         for(auto slipSystem : sSystems) {
-            for(auto slipPlane : slipSystem->getSlipPlanes()) {
-                slipPlane->moveDislocations(dt, b);
-            }
+           for(auto slipPlane : slipSystem->getSlipPlanes()) {
+               slipPlane->moveDislocations(dt, b);
+           }
         } 
     }
     

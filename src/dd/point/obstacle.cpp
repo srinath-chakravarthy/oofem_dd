@@ -40,7 +40,9 @@ namespace dd {
     void ObstaclePoint::pin(DislocationPoint * point) {
         if(point->slipPlanePosition() < slipPlanePosition()) {
             if(__negativePinned == point) { return; }
-            if(__negativePinned) { DdError::exception("Obstacle has a dislocation pinned at the negative side."); }
+            if(__negativePinned) {
+                DdError::exception("Obstacle has a dislocation pinned at the negative side."); 
+            }
             __negativePinned = point;
             point->positivePinTo(this);
         }

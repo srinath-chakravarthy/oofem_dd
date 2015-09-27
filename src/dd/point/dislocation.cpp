@@ -43,4 +43,9 @@ namespace dd {
     	if(!pinPointer) { DdError::exception("Not pinned."); }
     	pinPointer = nullptr;
 	}
+	
+	
+    bool DislocationPoint::pinned() const {
+        return __negativePin || __positivePin;
+    }
 }

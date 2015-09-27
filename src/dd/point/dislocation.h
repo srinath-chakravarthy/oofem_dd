@@ -32,11 +32,17 @@ namespace dd {
         virtual int getBurgersSign() const { return burgersSign; }
         ObstaclePoint * positivePin() const { return __positivePin; }
         ObstaclePoint * negativePin() const { return __negativePin; }
-        void positivePinTo(ObstaclePoint * obstacle) { __pinTo(obstacle, __positivePin); }
-        void negativePinTo(ObstaclePoint * obstacle) { __pinTo(obstacle, __negativePin); }
-        void positiveUnpin() { __unpin(__positivePin); }
-		void negativeUnpin() { __unpin(__negativePin); }
-
+        virtual void positivePinTo(ObstaclePoint * obstacle) { __pinTo(obstacle, __positivePin); }
+        virtual void negativePinTo(ObstaclePoint * obstacle) { __pinTo(obstacle, __negativePin); }
+        virtual void positiveUnpin() { __unpin(__positivePin); }
+        virtual void negativeUnpin() { __unpin(__negativePin); }
+        /**
+         * Check if this dislocation is pinned
+         * 
+         * @returns true if pinned
+         */
+        virtual bool pinned() const;
+        
         virtual string typeName() const { return DISLOCATIONPOINT_NAME; }
         static string staticTypeName() { return DISLOCATIONPOINT_NAME; }
     };
