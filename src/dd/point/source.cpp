@@ -42,10 +42,10 @@ namespace dd {
     		}
     		
     		if(antecedentIt == dislocs.end() || (*antecedentIt)->slipPlanePosition() > posPositive) {
-    			new DislocationPoint(domain(), slipPlane(), antecedentIt, posNegative, signNeg);
-    			new DislocationPoint(domain(), slipPlane(), antecedentIt, posPositive, signPos);
+                     new DislocationPoint(domain(), slipPlane(), antecedentIt, posPositive, signPos);
+                     new DislocationPoint(domain(), slipPlane(), antecedentIt, posNegative, signNeg);
     		}
-    		std::cout << "Generating dislocatios" << posNegative << " and " << posPositive << "\n";
+    		std::cerr << "Generating dislocatios" << posNegative << " and " << posPositive << "\n";
 		__timer = 0.0;
     	}
     }

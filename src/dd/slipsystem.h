@@ -4,17 +4,16 @@
 #include "ddobject.h"
 #include "vector.h"
 #include <cmath>
-#include "registrable/hashedregistrable.h"
+#include "registrable/singletonregistrable.h"
 #include <set>
 
 namespace dd {
 
     class SlipPlane;
 
-    class SlipSystem : public HashedRegistrable<SlipPlane, std::list<SlipPlane *>> {
+    class SlipSystem : public SingletonRegistrable<SlipPlane> {
 #define SLIPSYSTEM_NAME "SlipSystem"
     private:
-        std::list<SlipPlane *> sPlanes;
         double angle;
         double sin;
         double cos;
@@ -36,7 +35,7 @@ namespace dd {
         double getSin() const { return sin; }
         double getCos() const { return cos; }
         double getBurgersMagnitude() const { return bMag; }
-        std::list<SlipPlane *> & getSlipPlanes() { return sPlanes; }
+        std::list<SlipPlane *> & getSlipPlanes() { return container(); }
         Vector<2> getDirection() const { return directionVector; }
         Vector<2> normalDirection() const { return {directionVector[0], -directionVector[1]}; }
         virtual Vector<2> getPointPosition(const double & slipPlaneLocation,

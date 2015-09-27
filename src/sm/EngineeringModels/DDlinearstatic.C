@@ -250,7 +250,6 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
         double fact = mu * ss0.getBurgersMagnitude() / ( 2 * M_PI * (1. - nu));
         
         dd::SourcePoint s1 = dd::SourcePoint(&dd_domain, &sp0, 0, 25e-6, fact / 25e-6);
-
         
         for( dd_domain.dtNo = 1; dd_domain.dtNo < dd_domain.dtNomax; dd_domain.dtNo++) {
             std::cerr << "Total dislocs in domain: " << dd_domain.getContainer<dd::DislocationPoint>().size() << "\n";
