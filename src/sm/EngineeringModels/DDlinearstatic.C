@@ -242,51 +242,20 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
 
         dd::SlipPlane sp0 = dd::SlipPlane(&dd_domain, &ss0, 0.0);
 
-		dd::ObstaclePoint o0 = dd::ObstaclePoint(&dd_domain, &sp0, -0.25, 20.0e3);
-		dd::ObstaclePoint o1 = dd::ObstaclePoint(&dd_domain, &sp0, 0.25, 20.0e3);
-		double e = dd_domain.getModulus();
-		double nu = dd_domain.getPassionsRatio();
-		double mu = e / (2. * ( 1. + nu));
-		double fact = mu * ss0.getBurgersMagnitude() / ( 2 * M_PI * (1. - nu));
-		
-		dd::SourcePoint s1 = dd::SourcePoint(&dd_domain, &sp0, 0, 25e-6, fact / 25e-6);
-
-	
-        //dd::DislocationPoint dis0 = dd::DislocationPoint(&dd_domain, &sp0, -0.5, 1);
-        //dd::DislocationPoint dis1 = dd::DislocationPoint(&dd_domain, &sp0, 0.5, -1);
-        /*  
-        std::cout << "Dislocation point count: " << sp0.getContainer<dd::DislocationPoint>().size() << "\n";
+        dd::ObstaclePoint o0 = dd::ObstaclePoint(&dd_domain, &sp0, -0.25, 20.0e3);
+        dd::ObstaclePoint o1 = dd::ObstaclePoint(&dd_domain, &sp0, 0.25, 20.0e3);
+        double e = dd_domain.getModulus();
+        double nu = dd_domain.getPassionsRatio();
+        double mu = e / (2. * ( 1. + nu));
+        double fact = mu * ss0.getBurgersMagnitude() / ( 2 * M_PI * (1. - nu));
         
-	
-	    oofem::FloatArray force_dd;
+        dd::SourcePoint s1 = dd::SourcePoint(&dd_domain, &sp0, 0, 25e-6, fact / 25e-6);
 
-        dis0.addForceContribution<dd::DislocationPoint>(force, forceGradient, stress);
-		
-	
-	
-	// Convert dislocation position to global coordinates 
-	//FloatArray FeDislGlobalPos = dis0.getLocation();
-	/// Now find stress at this global location 
-	/// Step 1
-	/// Find Element conatining point 
-	//Element *elem = sl->giveElementContainingPoint(FeDislGlobalPos);
-	//// Now we need to write 3 routines in oofem to get the strain/stress at this point
-	// 1) Convert this global coordinate to element local coordinate
-	// 2) Evaluate Stress at this location, there are services in oofem to evaluate stress at a given gp
-	//    a) So perhaps it will be easy to convert this to a gp temporarily and then evaluate stress
-	//     OR 
-	//    b) It is easy to write a service in oofem to evaluate the stress at an arbitrary local point
-	/// Output will be FloatArray of size(3) giving quantities exactly the same as stress
-	/// So i am using the stress notation to evaluate the force
-	/// The total force on any Point is equal to the interaction force + burgers_vec_mag*burg_direction*((stress[1]-stress[2])*cos2i) + stress[3]*sin2i/2.)
-	
-        std::cout << force[0] << " " << force[1] << "\n";
-        */
-	
-	
-    
         
         for( dd_domain.dtNo = 1; dd_domain.dtNo < dd_domain.dtNomax; dd_domain.dtNo++) {
+            std::cerr << "Total dislocs in domain: " << dd_domain.getContainer<dd::DislocationPoint>().size() << "\n";
+            std::cerr << "Dislocs: " << sp0.dumpToString<dd::DislocationPoint>() << "\n";
+            std::cerr.flush();
             dd_domain.updateForceCaches();
             int disno = 1;
             for(auto point : dd_domain.getContainer<dd::DislocationPoint>()) {
@@ -303,7 +272,7 @@ void DDLinearStatic :: solveYourselfAt(TimeStep *tStep)
             s1.spawn(1, 5);
             dd_domain.updateForceCaches();
             sp0.moveDislocations(1.0e-11, 1.0e-18);
-
+            
             /*
             for(int bcNo = 1; bcNo <= giveDomain(i)->giveNumberOfBoundaryConditions(); bcNo++) {
             	ManualBoundaryCondition * bc = dynamic_cast<ManualBoundaryCondition *>(giveDomain(i)->giveBc(bcNo));

@@ -5,6 +5,8 @@
 #include "point/dislocation.h"
 
 #include <cmath>
+#include <sstream>
+#include <iostream>
 
 namespace dd {
 
@@ -25,15 +27,14 @@ namespace dd {
         return getSlipSystem()->getPointPosition(slipPlaneLocation, getOrigin());
     }
     
-void SlipPlane::moveDislocations(double dt, double b) {
-    std::list<Point *> & dislocs = HashedRegistrable<Point>::getContainer<DislocationPoint>();
-    std::list<Point *> & obs = HashedRegistrable<Point>::getContainer<ObstaclePoint>();
-    std::vector<double> projections;
-    projections.reserve(dislocs.size());
-    std::list<Point *>::iterator it;
+    void SlipPlane::moveDislocations(double dt, double b) {
+        std::list<Point *> & dislocs = HashedRegistrable<Point>::getContainer<DislocationPoint>();
+        std::list<Point *> & obs = HashedRegistrable<Point>::getContainer<ObstaclePoint>();
+        std::vector<double> projections;
+        projections.reserve(dislocs.size());
+        std::list<Point *>::iterator it;
 
-    // Release pins
-    if (!dislocs.empty()) {
+        // Release pins
         for(auto ob : obs) {
             static_cast<ObstaclePoint *>(ob)->release();
         }
@@ -127,11 +128,11 @@ void SlipPlane::moveDislocations(double dt, double b) {
             if(dis->getBurgersSign() == nextDis->getBurgersSign()) {
                 if(pushRight) {
                     projections[i] = std::max(projections[i],
-                                              projections[i - 1] + 2 * getBurgersMagnitude());
+                                            projections[i - 1] + 2 * getBurgersMagnitude());
                 }
                 else {
                     projections[i - 1] = std::min(projections[i - 1],
-                                                  projections[i] - 2 * getBurgersMagnitude());
+                                                projections[i] - 2 * getBurgersMagnitude());
                 }
             }
             else {
@@ -152,10 +153,16 @@ void SlipPlane::moveDislocations(double dt, double b) {
             it = nextIt;
         }
 
-        if(it == dislocs.begin()) {
+        if(it == dislocs.begin() && it != dislocs.end()) {
             (*it)->updateLocation(PointLog((*it)->slipPlane(), projections[0]));
         }
     }
-}
 
+    string SlipPlane::__dumpToString(std::list<Point *> & container) {
+        std::stringstream ss;
+        for(Point * p : container) {
+            ss << p->slipPlanePosition() << " ";
+        }
+        return ss.str();
+    }
 }

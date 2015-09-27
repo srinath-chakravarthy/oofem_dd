@@ -16,7 +16,7 @@ namespace dd {
         Vector<2> force;
         Vector<2> forceGradient;
         Vector<3> stress;
-        std::shared_ptr<ForceFunctor> functor;
+        ForceFunctor * __functor;
     public:
 	/**
 	 * Constructor.

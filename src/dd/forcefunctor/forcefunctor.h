@@ -6,16 +6,17 @@
 
 namespace dd {
       
-      class Point;
+    class Point;
       
-      class ForceFunctor : public DdObject {
+    class ForceFunctor : public DdObject {
 #define FORCEFUNCTOR_NAME "ForceFunctor" 	
-      public:
-	virtual ~ForceFunctor() { }
+    protected:     
+        virtual ~ForceFunctor() { }
+    public:
 	virtual void calculate(Point * point, Vector<2> & force, Vector<2> & forceGradient, Vector<3> stress) = 0;
 	virtual string typeName() const { return FORCEFUNCTOR_NAME; }
 	static string staticTypeName() { return FORCEFUNCTOR_NAME; }
-      };
+    };
 
 }
 

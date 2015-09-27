@@ -6,7 +6,7 @@
 namespace dd {
 
     ForceCache::ForceCache(ForceFunctor * functor) :
-        functor(functor) { }
+        __functor(functor) { }
     ForceCache::~ForceCache() { }
     
     Vector<2> ForceCache::getForce() const { return force; }
@@ -17,6 +17,6 @@ namespace dd {
         force.zero();
         forceGradient.zero();
         stress.zero();
-        functor->calculate(point, force, forceGradient, stress);
+        __functor->calculate(point, force, forceGradient, stress);
     }
 }

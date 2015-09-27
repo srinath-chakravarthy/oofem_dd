@@ -39,6 +39,7 @@ namespace dd {
          */
         virtual void erase(typename Container::iterator toErase) = 0;
         
+        
         virtual string typeName() const { return REGISTRABLE_NAME; }
         static string staticTypeName() { return REGISTRABLE_NAME; }
     };

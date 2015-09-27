@@ -5,19 +5,21 @@
 
 namespace dd {
 	
-	class FromFem : public ForceFunctor {
+    class FromFem : public ForceFunctor {
 #define FROMFEM_NAME "FromFem"
-	    static FromFem * instance;
-	    FromFem() { }
-	public:
-	    virtual ~FromFem() { }
-
-		virtual void calculate(Point * point, Vector<2> & force, Vector<2> & forceGradient, Vector<3> stress);
-		static FromFem * getInstance();
-		
+    private:
+        static FromFem * instance;
+        FromFem() { }
+    protected:
+        virtual ~FromFem() { }
+    public:
+        
+        virtual void calculate(Point * point, Vector<2> & force, Vector<2> & forceGradient, Vector<3> stress);
+        static FromFem * getInstance();
+            
         virtual string typeName() const { return FROMFEM_NAME; }
         static string staticTypeName() { return FROMFEM_NAME; }
-	};
+    };
 }
 
 #endif

@@ -75,7 +75,7 @@ namespace dd {
          */
         Point(Domain * domain, SlipPlane * sPlane, typename list<Point *>::iterator antecedentIt,
               double slipPlanePosition) :
-                  __slipPlanePosition(slipPlanePosition) {
+              __slipPlanePosition(slipPlanePosition) {
             setRegistrations(domain, sPlane, antecedentIt);
         }
 
@@ -98,6 +98,7 @@ namespace dd {
          * Destructor
          */
         virtual ~Point() {
+            caches.clear();
             destructRegistrations();
         }
 
@@ -189,7 +190,12 @@ namespace dd {
          */
         virtual void updateLocation(PointLog projectedLocation);
         virtual void updateLocation(const double & slipPlanePosition);
-
+        
+        /**
+         * Destructs this object
+         */
+        void destroy();
+        
         virtual string typeName() const { return POINT_NAME; }
         static string staticTypeName() { return POINT_NAME; }
     };

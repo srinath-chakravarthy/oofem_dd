@@ -30,9 +30,6 @@ namespace dd {
 	
 	
         virtual int getBurgersSign() const { return burgersSign; }
-
-		// TODO: Clear duplication
-
         ObstaclePoint * positivePin() const { return __positivePin; }
         ObstaclePoint * negativePin() const { return __negativePin; }
         void positivePinTo(ObstaclePoint * obstacle) { __pinTo(obstacle, __positivePin); }

@@ -16,7 +16,13 @@ namespace dd {
         Domain * domain;
         Registration<SlipPlane, std::list<SlipPlane *>, SlipSystem> slipSystemRegistration;
         double __normalDistance;
-
+        
+        /**
+         * Dumps the locations of the points in the given container into a string
+         * 
+         * @param pointsPtr     Pointer to the container
+         */
+        static string __dumpToString(std::list<Point *> & container);
     public:
         SlipPlane(Domain * domain, SlipSystem * slipSystem, double normalDistance);
 
@@ -33,6 +39,14 @@ namespace dd {
 	
 	/// Global x, y position of a point
         Vector<2> getPointPosition(const double & slipPlaneLocation) const;
+        
+        /**
+         * Dumps the points of the given type into a string
+         * 
+         * @param T     The type of points to be dumped.
+         */
+        template<typename T>
+        string dumpToString() { return __dumpToString(getContainer<T>()); }
 
         virtual string typeName() const { return SLIPPLANE_NAME; }
         static string staticTypeName() { return SLIPPLANE_NAME; }

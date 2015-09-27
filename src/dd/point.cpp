@@ -211,5 +211,9 @@ namespace dd {
     void Point::updateLocation(const double & slipPlanePosition) {
         updateLocation(PointLog(slipPlane(), slipPlanePosition));
     }
+   
+    void Point::destroy() {
+        delete this;
+    }
 }
 
